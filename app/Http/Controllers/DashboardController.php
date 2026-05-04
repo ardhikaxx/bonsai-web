@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index()
+     public function index()
     {
         // Data dummy untuk contoh
         $data = [
@@ -14,14 +14,16 @@ class DashboardController extends Controller
             'kelembapan_udara' => 55,
             'suhu' => 25.5,
             'hujan' => false,
+            'pompa' => true,  // Status pompa: true = ON, false = OFF
             'riwayat' => $this->getRiwayatData(),
+            'prediksi' => $this->getPrediksiData(),
             'grafik' => $this->getGrafikData()
         ];
 
         return view('dashboard', $data);
     }
 
-    private function getRiwayatData()
+     private function getRiwayatData()
     {
         return [
             [
@@ -69,7 +71,7 @@ class DashboardController extends Controller
         ];
     }
 
-    private function getGrafikData()
+     private function getGrafikData()
     {
         return [
             'labels' => ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
@@ -77,6 +79,42 @@ class DashboardController extends Controller
             'kelembapan_udara' => [55, 58, 52, 62, 65, 60],    // Data kelembapan udara baru
             'suhu' => [25.0, 24.5, 26.0, 28.5, 27.0, 26.0],
             'hujan' => [0, 0, 0, 1, 1, 0]
+        ];
+    }
+
+    private function getPrediksiData()
+    {
+        return [
+            [
+                'tanggal' => now()->addHour()->format('Y-m-d H:i:s'),
+                'kelembapan_prediksi' => 62,
+                'status' => 'Tidak Siram',
+                'pompa_status' => false
+            ],
+            [
+                'tanggal' => now()->addHours(3)->format('Y-m-d H:i:s'),
+                'kelembapan_prediksi' => 58,
+                'status' => 'Tidak Siram',
+                'pompa_status' => false
+            ],
+            [
+                'tanggal' => now()->addHours(6)->format('Y-m-d H:i:s'),
+                'kelembapan_prediksi' => 38,
+                'status' => 'Siram',
+                'pompa_status' => true
+            ],
+            [
+                'tanggal' => now()->addHours(9)->format('Y-m-d H:i:s'),
+                'kelembapan_prediksi' => 42,
+                'status' => 'Tidak Siram',
+                'pompa_status' => false
+            ],
+            [
+                'tanggal' => now()->addHours(12)->format('Y-m-d H:i:s'),
+                'kelembapan_prediksi' => 35,
+                'status' => 'Siram',
+                'pompa_status' => true
+            ],
         ];
     }
 }

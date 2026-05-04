@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="space-y-8">
-        <!-- Header dengan Gambar Bonsai -->
+        <!-- Header -->
         <div class="relative bg-gradient-to-r from-green-600 to-green-800 rounded-2xl shadow-2xl overflow-hidden">
             <div class="absolute inset-0 bg-black opacity-20"></div>
             <div class="relative z-10 p-8 flex flex-col md:flex-row items-center justify-between">
@@ -10,12 +10,43 @@
                     <h1 class="text-3xl md:text-4xl font-bold mb-2">Monitor Kebun Bonsai</h1>
                     <p class="text-emerald-100 text-lg">Pemantauan real-time untuk koleksi bonsai Anda</p>
                 </div>
-                <div class="mt-4 md:mt-0">
+                 <div class="mt-4 md:mt-0">
                     <div
-                        class="flex items-center space-x-3 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-sm rounded-xl px-5 py-3 shadow-lg">
-
+                        class="flex items-center space-x-3 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-sm rounded-xl px-5 py-3 shadow-lg cursor-pointer" onclick="togglePompa()">
+                        <div class="flex items-center space-x-3">
+                            <div id="pompaIndicator" class="w-3 h-3 rounded-full {{ $pompa ? 'bg-green-400 animate-pulse' : 'bg-gray-400' }}"></div>
+                            <span class="text-white font-semibold">Pompa</span>
+                            <span id="pompaStatus" class="px-3 py-1 rounded-full text-sm font-bold {{ $pompa ? 'bg-green-500/20 text-green-200' : 'bg-gray-500/20 text-gray-200' }}">
+                                {{ $pompa ? 'ON' : 'OFF' }}
+                            </span>
+                        </div>
                     </div>
                 </div>
+
+                <script>
+                let pompaState = {{ $pompa ? 'true' : 'false' }};
+                
+                function togglePompa() {
+                    pompaState = !pompaState;
+                    
+                    const indicator = document.getElementById('pompaIndicator');
+                    const status = document.getElementById('pompaStatus');
+                    
+                    if (pompaState) {
+                        indicator.classList.remove('bg-gray-400');
+                        indicator.classList.add('bg-green-400', 'animate-pulse');
+                        status.classList.remove('bg-gray-500/20', 'text-gray-200');
+                        status.classList.add('bg-green-500/20', 'text-green-200');
+                        status.textContent = 'ON';
+                    } else {
+                        indicator.classList.remove('bg-green-400', 'animate-pulse');
+                        indicator.classList.add('bg-gray-400');
+                        status.classList.remove('bg-green-500/20', 'text-green-200');
+                        status.classList.add('bg-gray-500/20', 'text-gray-200');
+                        status.textContent = 'OFF';
+                    }
+                }
+                </script>
             </div>
         </div>
 
@@ -236,7 +267,7 @@
                             class="px-3 py-1 bg-gray-100 rounded-lg text-sm text-gray-600 hover:bg-gray-200">30h</button>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div>
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="text-sm font-semibold text-gray-500 flex items-center">
@@ -263,6 +294,19 @@
                             <canvas id="suhuChart" height="150"></canvas>
                         </div>
                     </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm font-semibold text-gray-500 flex items-center">
+                                <span class="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                                Kelembapan Udara (%)
+                            </h3>
+                            <div class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Kisaran Normal: 50-80%
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl p-4 shadow-inner border border-gray-100">
+                            <canvas id="kelembapanUdaraChart" height="150"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -277,28 +321,28 @@
                             class="px-4 py-2 bg-gray-100 rounded-lg text-sm text-gray-600 hover:bg-gray-200 flex items-center">
                             <i class="fas fa-filter mr-2"></i> Filter
                         </button>
-                        <button
-                            class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-emerald-700 flex items-center transition-all hover:shadow-lg">
-                            <i class="fas fa-file-pdf mr-2"></i> Ekspor PDF
+                         <button
+                            class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-emerald-700 flex items-center transition-all hover:shadow-lg" id="exportExcelBtn">
+                            <i class="fas fa-file-excel mr-2"></i> Ekspor Excel
                         </button>
                     </div>
                 </div>
                 <div class="overflow-x-auto rounded-xl border border-gray-100 shadow-inner">
                     <table class="min-w-full divide-y divide-gray-200 text-center">
-                        <thead class="bg-gray-50 text-left">
-                            <tr>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal &
-                                    Waktu</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Kelembapan
-                                    Tanah</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Kelembapan
-                                    Udara</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Suhu</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status
-                                    Hujan</th>
-                                <th class="px-10 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
-                            </tr>
-                        </thead>
+                         <thead class="bg-gray-50 text-left">
+                             <tr>
+                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal &
+                                     Waktu</th>
+                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Kelembapan
+                                     Tanah</th>
+                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Kelembapan
+                                     Udara</th>
+                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Suhu</th>
+                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status
+                                     Hujan</th>
+                                 <th class="px-10 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                             </tr>
+                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100 text-left">
                             @foreach ($riwayat as $data)
                                 <tr class="hover:bg-gray-50 transition-colors">
@@ -379,17 +423,72 @@
                 </div>
             </div>
         </div>
+
+        <!-- Bagian Prediksi -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/20">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-gray-700">Prediksi Kelembapan Tanah</h2>
+                    
+                </div>
+                <div class="overflow-x-auto rounded-xl border border-gray-100 shadow-inner">
+                    <table class="min-w-full divide-y divide-gray-200 text-center">
+                        <thead class="bg-gray-50 text-left">
+                            <tr>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Tanggal & Waktu</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Prediksi Kelembapan</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Status Prediksi</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Status Pompa</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-100 text-center">
+                            @foreach ($prediksi as $data)
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">
+                                            {{ \Carbon\Carbon::parse($data['tanggal'])->format('d M Y') }}</div>
+                                        <div class="text-xs text-gray-500">
+                                            {{ \Carbon\Carbon::parse($data['tanggal'])->format('H:i') }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center justify-center">
+                                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+                                                <i class="fas fa-tint text-blue-600 text-xs"></i>
+                                            </div>
+                                            <span class="text-sm font-medium text-blue-600">{{ $data['kelembapan_prediksi'] }}%</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                            {{ $data['status'] == 'Siram' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
+                                            <i class="fas {{ $data['status'] == 'Siram' ? 'fa-faucet' : 'fa-check-circle' }} mr-1"></i>
+                                            {{ $data['status'] }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                            {{ $data['pompa_status'] ? 'bg-blue-500 text-white shadow-sm' : 'bg-gray-100 text-gray-600' }}">
+                                            <i class="fas fa-power-off mr-1"></i>
+                                            {{ $data['pompa_status'] ? 'ON' : 'OFF' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Grafik Kelembapan dengan gradient
+            // Grafik Kelembapan Tanah
             const kelembapanCtx = document.getElementById('kelembapanChart').getContext('2d');
             const kelembapanGradient = kelembapanCtx.createLinearGradient(0, 0, 0, 150);
             kelembapanGradient.addColorStop(0, 'rgba(59, 130, 246, 0.3)');
             kelembapanGradient.addColorStop(1, 'rgba(59, 130, 246, 0.1)');
-
-            const kelembapanChart = new Chart(kelembapanCtx, {
+            new Chart(kelembapanCtx, {
                 type: 'line',
                 data: {
                     labels: @json($grafik['labels']),
@@ -411,57 +510,55 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleFont: {
-                                size: 14
-                            },
-                            bodyFont: {
-                                size: 12
-                            },
-                            padding: 12,
-                            cornerRadius: 8
-                        }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
-                        y: {
-                            beginAtZero: false,
-                            min: 50,
-                            max: 100,
-                            grid: {
-                                drawBorder: false,
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            },
-                            ticks: {
-                                padding: 10
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false,
-                                drawBorder: false
-                            },
-                            ticks: {
-                                padding: 10
-                            }
-                        }
+                        y: { beginAtZero: false, min: 50, max: 100, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false, drawBorder: false } }
                     }
                 }
             });
 
-            // Grafik Suhu dengan gradient
+            // Grafik Kelembapan Udara
+            const kelembapanUdaraCtx = document.getElementById('kelembapanUdaraChart').getContext('2d');
+            const kelembapanUdaraGradient = kelembapanUdaraCtx.createLinearGradient(0, 0, 0, 150);
+            kelembapanUdaraGradient.addColorStop(0, 'rgba(34, 197, 94, 0.3)');
+            kelembapanUdaraGradient.addColorStop(1, 'rgba(34, 197, 94, 0.1)');
+            new Chart(kelembapanUdaraCtx, {
+                type: 'line',
+                data: {
+                    labels: @json($grafik['labels']),
+                    datasets: [{
+                        label: 'Kelembapan Udara',
+                        data: @json($grafik['kelembapan_udara']),
+                        backgroundColor: kelembapanUdaraGradient,
+                        borderColor: 'rgba(34, 197, 94, 1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: 'white',
+                        pointBorderColor: 'rgba(34, 197, 94, 1)',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: false, min: 40, max: 100, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false, drawBorder: false } }
+                    }
+                }
+            });
+
+            // Grafik Suhu
             const suhuCtx = document.getElementById('suhuChart').getContext('2d');
             const suhuGradient = suhuCtx.createLinearGradient(0, 0, 0, 150);
             suhuGradient.addColorStop(0, 'rgba(249, 115, 22, 0.3)');
             suhuGradient.addColorStop(1, 'rgba(249, 115, 22, 0.1)');
-
-            const suhuChart = new Chart(suhuCtx, {
+            new Chart(suhuCtx, {
                 type: 'line',
                 data: {
                     labels: @json($grafik['labels']),
@@ -483,94 +580,64 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleFont: {
-                                size: 14
-                            },
-                            bodyFont: {
-                                size: 12
-                            },
-                            padding: 12,
-                            cornerRadius: 8
-                        }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
-                        y: {
-                            beginAtZero: false,
-                            min: 20,
-                            max: 40,
-                            grid: {
-                                drawBorder: false,
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            },
-                            ticks: {
-                                padding: 10
-                            }
-                        },
-                        x: {
-                            grid: {
-                                display: false,
-                                drawBorder: false
-                            },
-                            ticks: {
-                                padding: 10
-                            }
-                        }
+                        y: { beginAtZero: false, min: 20, max: 40, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false, drawBorder: false } }
                     }
                 }
             });
-        });
 
-        // Anda bisa menambahkan JavaScript kustom di sini jika diperlukan
-        document.addEventListener('DOMContentLoaded', function() {
             // Fungsi tombol refresh
             const refreshBtn = document.querySelector('button.bg-green-700');
             if (refreshBtn) {
-                refreshBtn.addEventListener('click', function() {
-                    window.location.reload();
+                refreshBtn.addEventListener('click', function() { window.location.reload(); });
+            }
+
+            // Fungsi tombol unduh Excel
+            const exportExcelBtn = document.getElementById('exportExcelBtn');
+            if (exportExcelBtn) {
+                exportExcelBtn.addEventListener('click', function() {
+                    alert('Fungsi unduh Excel akan diimplementasikan di sini\\n(Data akan diekspor dalam format .xlsx)');
                 });
             }
 
-            // Fungsi tombol unduh PDF
-            const pdfBtn = document.querySelector('button.bg-green-600');
-            if (pdfBtn) {
-                pdfBtn.addEventListener('click', function() {
-                    alert('Fungsi unduh PDF akan diimplementasikan di sini');
-                    // Di aplikasi nyata, Anda akan membuat dan mengunduh PDF
-                });
+            // Toggle pompa
+            let pompaState = {{ $pompa ? 'true' : 'false' }};
+            function togglePompa() {
+                pompaState = !pompaState;
+                const indicator = document.getElementById('pompaIndicator');
+                const status = document.getElementById('pompaStatus');
+                if (pompaState) {
+                    indicator.classList.remove('bg-gray-400');
+                    indicator.classList.add('bg-green-400', 'animate-pulse');
+                    status.classList.remove('bg-gray-500/20', 'text-gray-200');
+                    status.classList.add('bg-green-500/20', 'text-green-200');
+                    status.textContent = 'ON';
+                } else {
+                    indicator.classList.remove('bg-green-400', 'animate-pulse');
+                    indicator.classList.add('bg-gray-400');
+                    status.classList.remove('bg-green-500/20', 'text-green-200');
+                    status.classList.add('bg-gray-500/20', 'text-gray-200');
+                    status.textContent = 'OFF';
+                }
             }
-        });
 
-        const switchToggle = document.getElementById('switchToggle');
-        const switchStatus = document.getElementById('switchStatus');
-        const onIcon = document.getElementById('onIcon');
-        const offIcon = document.getElementById('offIcon');
-
-        function updateSwitchStatus() {
-            if (switchToggle.checked) {
-                switchStatus.textContent = 'ACTIVE';
-                switchStatus.classList.remove('bg-gradient-to-r', 'from-rose-400', 'to-pink-500');
-                switchStatus.classList.add('bg-gradient-to-r', 'from-emerald-400', 'to-teal-500');
-            } else {
-                switchStatus.textContent = 'INACTIVE';
-                switchStatus.classList.remove('bg-gradient-to-r', 'from-emerald-400', 'to-teal-500');
-                switchStatus.classList.add('bg-gradient-to-r', 'from-rose-400', 'to-pink-500');
+            // Toggle switch status
+            const switchToggle = document.getElementById('switchToggle');
+            const switchStatus = document.getElementById('switchStatus');
+            const onIcon = document.getElementById('onIcon');
+            const offIcon = document.getElementById('offIcon');
+            function updateSwitchStatus() {
+                if (switchToggle && switchToggle.checked) {
+                    if (switchStatus) { switchStatus.textContent = 'ACTIVE'; switchStatus.classList.remove('bg-gradient-to-r','from-rose-400','to-pink-500'); switchStatus.classList.add('bg-gradient-to-r','from-emerald-400','to-teal-500'); }
+                } else {
+                    if (switchStatus) { switchStatus.textContent = 'INACTIVE'; switchStatus.classList.remove('bg-gradient-to-r','from-emerald-400','to-teal-500'); switchStatus.classList.add('bg-gradient-to-r','from-rose-400','to-pink-500'); }
+                }
             }
-        }
-
-        // Initial check
-        updateSwitchStatus();
-
-        // Update on change
-        switchToggle.addEventListener('change', updateSwitchStatus);
-    </script>
+            if (switchToggle) { switchToggle.addEventListener('change', updateSwitchStatus); updateSwitchStatus(); }
+         });
+     </script>
 
     <style>
         @keyframes rain {
