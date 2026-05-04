@@ -433,46 +433,38 @@
                 </div>
                 <div class="overflow-x-auto rounded-xl border border-gray-100 shadow-inner">
                     <table class="min-w-full divide-y divide-gray-200 text-center">
-                        <thead class="bg-gray-50 text-left">
-                            <tr>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Tanggal & Waktu</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Prediksi Kelembapan</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Status Prediksi</th>
-                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Status Pompa</th>
-                            </tr>
+                         <thead class="bg-gray-50 text-left">
+                             <tr>
+                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Tanggal & Waktu</th>
+                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Prediksi Kelembapan</th>
+                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Status Prediksi</th>
+                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100 text-center">
                             @foreach ($prediksi as $data)
-                                <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-medium text-gray-900">
-                                            {{ \Carbon\Carbon::parse($data['tanggal'])->format('d M Y') }}</div>
-                                        <div class="text-xs text-gray-500">
-                                            {{ \Carbon\Carbon::parse($data['tanggal'])->format('H:i') }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center justify-center">
-                                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
-                                                <i class="fas fa-tint text-blue-600 text-xs"></i>
-                                            </div>
-                                            <span class="text-sm font-medium text-blue-600">{{ $data['kelembapan_prediksi'] }}%</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                            {{ $data['status'] == 'Siram' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
-                                            <i class="fas {{ $data['status'] == 'Siram' ? 'fa-faucet' : 'fa-check-circle' }} mr-1"></i>
-                                            {{ $data['status'] }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                            {{ $data['pompa_status'] ? 'bg-blue-500 text-white shadow-sm' : 'bg-gray-100 text-gray-600' }}">
-                                            <i class="fas fa-power-off mr-1"></i>
-                                            {{ $data['pompa_status'] ? 'ON' : 'OFF' }}
-                                        </span>
-                                    </td>
-                                </tr>
+                                 <tr class="hover:bg-gray-50 transition-colors">
+                                     <td class="px-6 py-4 whitespace-nowrap">
+                                         <div class="text-sm font-medium text-gray-900">
+                                             {{ \Carbon\Carbon::parse($data['tanggal'])->format('d M Y') }}</div>
+                                         <div class="text-xs text-gray-500">
+                                             {{ \Carbon\Carbon::parse($data['tanggal'])->format('H:i') }}</div>
+                                     </td>
+                                     <td class="px-6 py-4 whitespace-nowrap">
+                                         <div class="flex items-center justify-center">
+                                             <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+                                                 <i class="fas fa-tint text-blue-600 text-xs"></i>
+                                             </div>
+                                             <span class="text-sm font-medium text-blue-600">{{ $data['kelembapan_prediksi'] }}%</span>
+                                         </div>
+                                     </td>
+                                     <td class="px-6 py-4 whitespace-nowrap">
+                                         <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                             {{ $data['status'] == 'Siram' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
+                                             <i class="fas {{ $data['status'] == 'Siram' ? 'fa-faucet' : 'fa-check-circle' }} mr-1"></i>
+                                             {{ $data['status'] }}
+                                         </span>
+                                     </td>
+                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
