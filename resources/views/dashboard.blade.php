@@ -10,13 +10,16 @@
                     <h1 class="text-3xl md:text-4xl font-bold mb-2">Monitor Kebun Bonsai</h1>
                     <p class="text-emerald-100 text-lg">Pemantauan real-time untuk koleksi bonsai Anda</p>
                 </div>
-                 <div class="mt-4 md:mt-0">
-                    <div
-                        class="flex items-center space-x-3 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-sm rounded-xl px-5 py-3 shadow-lg cursor-pointer" onclick="togglePompa()">
+                <div class="mt-4 md:mt-0">
+                    <div class="flex items-center space-x-3 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-sm rounded-xl px-5 py-3 shadow-lg cursor-pointer"
+                        onclick="togglePompa()">
                         <div class="flex items-center space-x-3">
-                            <div id="pompaIndicator" class="w-3 h-3 rounded-full {{ $pompa ? 'bg-green-400 animate-pulse' : 'bg-gray-400' }}"></div>
+                            <div id="pompaIndicator"
+                                class="w-3 h-3 rounded-full {{ $pompa ? 'bg-green-400 animate-pulse' : 'bg-gray-400' }}">
+                            </div>
                             <span class="text-white font-semibold">Pompa</span>
-                            <span id="pompaStatus" class="px-3 py-1 rounded-full text-sm font-bold {{ $pompa ? 'bg-green-500/20 text-green-200' : 'bg-gray-500/20 text-gray-200' }}">
+                            <span id="pompaStatus"
+                                class="px-3 py-1 rounded-full text-sm font-bold {{ $pompa ? 'bg-green-500/20 text-green-200' : 'bg-gray-500/20 text-gray-200' }}">
                                 {{ $pompa ? 'ON' : 'OFF' }}
                             </span>
                         </div>
@@ -24,28 +27,28 @@
                 </div>
 
                 <script>
-                let pompaState = {{ $pompa ? 'true' : 'false' }};
-                
-                function togglePompa() {
-                    pompaState = !pompaState;
-                    
-                    const indicator = document.getElementById('pompaIndicator');
-                    const status = document.getElementById('pompaStatus');
-                    
-                    if (pompaState) {
-                        indicator.classList.remove('bg-gray-400');
-                        indicator.classList.add('bg-green-400', 'animate-pulse');
-                        status.classList.remove('bg-gray-500/20', 'text-gray-200');
-                        status.classList.add('bg-green-500/20', 'text-green-200');
-                        status.textContent = 'ON';
-                    } else {
-                        indicator.classList.remove('bg-green-400', 'animate-pulse');
-                        indicator.classList.add('bg-gray-400');
-                        status.classList.remove('bg-green-500/20', 'text-green-200');
-                        status.classList.add('bg-gray-500/20', 'text-gray-200');
-                        status.textContent = 'OFF';
+                    let pompaState = {{ $pompa ? 'true' : 'false' }};
+
+                    function togglePompa() {
+                        pompaState = !pompaState;
+
+                        const indicator = document.getElementById('pompaIndicator');
+                        const status = document.getElementById('pompaStatus');
+
+                        if (pompaState) {
+                            indicator.classList.remove('bg-gray-400');
+                            indicator.classList.add('bg-green-400', 'animate-pulse');
+                            status.classList.remove('bg-gray-500/20', 'text-gray-200');
+                            status.classList.add('bg-green-500/20', 'text-green-200');
+                            status.textContent = 'ON';
+                        } else {
+                            indicator.classList.remove('bg-green-400', 'animate-pulse');
+                            indicator.classList.add('bg-gray-400');
+                            status.classList.remove('bg-green-500/20', 'text-green-200');
+                            status.classList.add('bg-gray-500/20', 'text-gray-200');
+                            status.textContent = 'OFF';
+                        }
                     }
-                }
                 </script>
             </div>
         </div>
@@ -253,58 +256,123 @@
             </div>
         </div>
 
-        <!-- Bagian Grafik -->
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/20">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold text-gray-700">Tren Lingkungan</h2>
-                    <div class="flex space-x-2">
-                        <button
-                            class="px-3 py-1 bg-gray-100 rounded-lg text-sm text-gray-600 hover:bg-gray-200">24j</button>
-                        <button
-                            class="px-3 py-1 bg-emerald-600 text-white rounded-lg text-sm hover:bg-emerald-700">7h</button>
-                        <button
-                            class="px-3 py-1 bg-gray-100 rounded-lg text-sm text-gray-600 hover:bg-gray-200">30h</button>
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-6 items-start">
+            <!-- Bagian Grafik -->
+            <div class="xl:col-span-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/20">
+                <div class="p-6">
+                    <div class="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center mb-6">
+                        <h2 class="text-xl font-bold text-gray-700">Tren Lingkungan</h2>
+                        <div class="flex space-x-2">
+                            <button
+                                class="px-3 py-1 bg-gray-100 rounded-lg text-sm text-gray-600 hover:bg-gray-200">24j</button>
+                            <button
+                                class="px-3 py-1 bg-emerald-600 text-white rounded-lg text-sm hover:bg-emerald-700">7h</button>
+                            <button
+                                class="px-3 py-1 bg-gray-100 rounded-lg text-sm text-gray-600 hover:bg-gray-200">30h</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div>
+                            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-3">
+                                <h3 class="text-sm font-semibold text-gray-500 flex items-center">
+                                    <span class="w-3 h-3 bg-blue-500 rounded-full mr-2"></span>
+                                    Kelembapan Tanah (%)
+                                </h3>
+                                <div class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full w-fit">Kisaran Optimal:
+                                    40-80%</div>
+                            </div>
+                            <div class="bg-white rounded-xl p-4 shadow-inner border border-gray-100 h-64">
+                                <canvas id="kelembapanChart"></canvas>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-3">
+                                <h3 class="text-sm font-semibold text-gray-500 flex items-center">
+                                    <span class="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
+                                    Kelembapan Udara (%)
+                                </h3>
+                                <div class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full w-fit">Kisaran Normal:
+                                    50-80%</div>
+                            </div>
+                            <div class="bg-white rounded-xl p-4 shadow-inner border border-gray-100 h-64">
+                                <canvas id="kelembapanUdaraChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-2">
+                            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-3">
+                                <h3 class="text-sm font-semibold text-gray-500 flex items-center">
+                                    <span class="w-3 h-3 bg-orange-500 rounded-full mr-2"></span>
+                                    Suhu (°C)
+                                </h3>
+                                <div class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full w-fit">Kisaran Ideal:
+                                    20-30°C</div>
+                            </div>
+                            <div class="bg-white rounded-xl p-4 shadow-inner border border-gray-100 h-64">
+                                <canvas id="suhuChart"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-sm font-semibold text-gray-500 flex items-center">
-                                <span class="w-3 h-3 bg-blue-500 rounded-full mr-2"></span>
-                                Kelembapan Tanah (%)
-                            </h3>
-                            <div class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Kisaran Optimal: 40-80%
-                            </div>
+            </div>
+
+            <!-- Kontrol Manual -->
+            <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/20">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-700">Kontrol Manual</h2>
+                            <p class="text-sm text-gray-500 mt-1">Kendali perangkat kebun</p>
                         </div>
-                        <div class="bg-white rounded-xl p-4 shadow-inner border border-gray-100">
-                            <canvas id="kelembapanChart" height="150"></canvas>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-sm font-semibold text-gray-500 flex items-center">
-                                <span class="w-3 h-3 bg-orange-500 rounded-full mr-2"></span>
-                                Suhu (°C)
-                            </h3>
-                            <div class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded-full">Kisaran Ideal:
-                                20-30°C</div>
-                        </div>
-                        <div class="bg-white rounded-xl p-4 shadow-inner border border-gray-100">
-                            <canvas id="suhuChart" height="150"></canvas>
+                        <div class="w-11 h-11 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                            <i class="fas fa-sliders-h"></i>
                         </div>
                     </div>
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-sm font-semibold text-gray-500 flex items-center">
-                                <span class="w-3 h-3 bg-green-500 rounded-full mr-2"></span>
-                                Kelembapan Udara (%)
-                            </h3>
-                            <div class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Kisaran Normal: 50-80%
+
+                    <div class="space-y-5">
+                        <div class="rounded-xl border border-gray-100 bg-white p-4 shadow-inner">
+                            <div class="flex items-center justify-between gap-3 mb-4">
+                                <div>
+                                    <h3 class="text-sm font-semibold text-gray-700">Penyiraman Manual</h3>
+                                    <p class="text-xs text-gray-500 mt-1">Status: <span id="wateringManualStatus">OFF</span></p>
+                                </div>
+                                <div id="wateringManualIcon"
+                                    class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center">
+                                    <i class="fas fa-tint"></i>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" data-manual-group="watering" data-manual-value="ON"
+                                    class="manual-control-btn px-3 py-2 rounded-lg text-sm font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    ON
+                                </button>
+                                <button type="button" data-manual-group="watering" data-manual-value="OFF"
+                                    class="manual-control-btn active px-3 py-2 rounded-lg text-sm font-semibold bg-red-500 text-white hover:bg-red-600">
+                                    OFF
+                                </button>
                             </div>
                         </div>
-                        <div class="bg-white rounded-xl p-4 shadow-inner border border-gray-100">
-                            <canvas id="kelembapanUdaraChart" height="150"></canvas>
+
+                        <div class="rounded-xl border border-gray-100 bg-white p-4 shadow-inner">
+                            <div class="flex items-center justify-between gap-3 mb-4">
+                                <div>
+                                    <h3 class="text-sm font-semibold text-gray-700">Atap Manual</h3>
+                                    <p class="text-xs text-gray-500 mt-1">Status: <span id="roofManualStatus">Tertutup</span></p>
+                                </div>
+                                <div id="roofManualIcon"
+                                    class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
+                                    <i class="fas fa-warehouse"></i>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" data-manual-group="roof" data-manual-value="Buka"
+                                    class="manual-control-btn px-3 py-2 rounded-lg text-sm font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200">
+                                    Buka
+                                </button>
+                                <button type="button" data-manual-group="roof" data-manual-value="Tutup"
+                                    class="manual-control-btn active px-3 py-2 rounded-lg text-sm font-semibold bg-green-600 text-white hover:bg-green-700">
+                                    Tutup
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -321,30 +389,37 @@
                             class="px-4 py-2 bg-gray-100 rounded-lg text-sm text-gray-600 hover:bg-gray-200 flex items-center">
                             <i class="fas fa-filter mr-2"></i> Filter
                         </button>
-                         <button
-                            class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-emerald-700 flex items-center transition-all hover:shadow-lg" id="exportExcelBtn">
+                        <button
+                            class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-emerald-700 flex items-center transition-all hover:shadow-lg"
+                            id="exportExcelBtn">
                             <i class="fas fa-file-excel mr-2"></i> Ekspor Excel
                         </button>
                     </div>
                 </div>
                 <div class="overflow-x-auto rounded-xl border border-gray-100 shadow-inner">
                     <table class="min-w-full divide-y divide-gray-200 text-center">
-                         <thead class="bg-gray-50 text-left">
-                             <tr>
-                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal &
-                                     Waktu</th>
-                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Kelembapan
-                                     Tanah</th>
-                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Kelembapan
-                                     Udara</th>
-                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Suhu</th>
-                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status
-                                     Hujan</th>
-                                 <th class="px-10 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
-                             </tr>
-                         </thead>
+                        <thead class="bg-gray-50 text-left">
+                            <tr>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal &
+                                    Waktu</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Kelembapan
+                                    Tanah</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Kelembapan
+                                    Udara</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Suhu</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status
+                                    Hujan</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Prediksi
+                                    Kelembapan</th>
+                                <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Status
+                                    Prediksi</th>
+                            </tr>
+                        </thead>
                         <tbody class="bg-white divide-y divide-gray-100 text-left">
                             @foreach ($riwayat as $data)
+                                @php
+                                    $dataPrediksi = $prediksi[$loop->index] ?? null;
+                                @endphp
                                 <tr class="hover:bg-gray-50 transition-colors">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900">
@@ -376,24 +451,46 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
                                             <div
-                                                class="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center mr-2">
-                                                <i class="fas fa-thermometer-half text-orange-500 text-xs"></i>
+                                                class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center mr-2">
+                                                <i class="fas fa-thermometer-half text-yellow-600 text-xs"></i>
                                             </div>
-                                            <span class="text-sm font-medium text-orange-600">{{ $data['suhu'] }}°C</span>
+                                            <span class="text-sm font-medium text-yellow-700">{{ $data['suhu'] }}°C</span>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span
-                                            class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                            class="px-3 py-1 inline-flex items-center justify-center gap-1.5 text-xs leading-5 font-semibold rounded-full min-w-[76px]
                                     {{ $data['hujan'] ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
-                                            <i class="fas {{ $data['hujan'] ? 'fa-cloud-rain' : 'fa-sun' }} mr-1"></i>
+                                            <i class="fas {{ $data['hujan'] ? 'fa-cloud-rain' : 'fa-sun' }} text-xs"></i>
                                             {{ $data['hujan'] ? 'Hujan' : 'Cerah' }}
                                         </span>
                                     </td>
-                                    <td class="px-10 py-4 whitespace-nowrap text-sm font-medium">
-                                        <button class="text-gray-400 hover:text-gray-600 mr-3">
-                                            <i class="fas fa-eye mr-2"></i>Lihat
-                                        </button>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        @if ($dataPrediksi)
+                                            <div class="flex items-center">
+                                                <div
+                                                    class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+                                                    <i class="fas fa-tint text-blue-600 text-xs"></i>
+                                                </div>
+                                                <span
+                                                    class="text-sm font-medium text-blue-600">{{ $dataPrediksi['kelembapan_prediksi'] }}%</span>
+                                            </div>
+                                        @else
+                                            <span class="text-sm text-gray-400">-</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        @if ($dataPrediksi)
+                                            <span
+                                                class="px-3 py-1 inline-flex items-center justify-center gap-1.5 text-xs leading-5 font-semibold rounded-full min-w-[96px]
+                                                {{ $dataPrediksi['status'] == 'Siram' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
+                                                <i
+                                                    class="fas {{ $dataPrediksi['status'] == 'Siram' ? 'fa-faucet' : 'fa-check-circle' }} text-xs"></i>
+                                                {{ $dataPrediksi['status'] }}
+                                            </span>
+                                        @else
+                                            <span class="text-sm text-gray-400">-</span>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
@@ -424,53 +521,6 @@
             </div>
         </div>
 
-        <!-- Bagian Prediksi -->
-        <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/20">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold text-gray-700">Prediksi Kelembapan Tanah</h2>
-                    
-                </div>
-                <div class="overflow-x-auto rounded-xl border border-gray-100 shadow-inner">
-                    <table class="min-w-full divide-y divide-gray-200 text-center">
-                         <thead class="bg-gray-50 text-left">
-                             <tr>
-                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Tanggal & Waktu</th>
-                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Prediksi Kelembapan</th>
-                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Status Prediksi</th>
-                             </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-100 text-center">
-                            @foreach ($prediksi as $data)
-                                 <tr class="hover:bg-gray-50 transition-colors">
-                                     <td class="px-6 py-4 whitespace-nowrap">
-                                         <div class="text-sm font-medium text-gray-900">
-                                             {{ \Carbon\Carbon::parse($data['tanggal'])->format('d M Y') }}</div>
-                                         <div class="text-xs text-gray-500">
-                                             {{ \Carbon\Carbon::parse($data['tanggal'])->format('H:i') }}</div>
-                                     </td>
-                                     <td class="px-6 py-4 whitespace-nowrap">
-                                         <div class="flex items-center justify-center">
-                                             <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
-                                                 <i class="fas fa-tint text-blue-600 text-xs"></i>
-                                             </div>
-                                             <span class="text-sm font-medium text-blue-600">{{ $data['kelembapan_prediksi'] }}%</span>
-                                         </div>
-                                     </td>
-                                     <td class="px-6 py-4 whitespace-nowrap">
-                                         <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                             {{ $data['status'] == 'Siram' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
-                                             <i class="fas {{ $data['status'] == 'Siram' ? 'fa-faucet' : 'fa-check-circle' }} mr-1"></i>
-                                             {{ $data['status'] }}
-                                         </span>
-                                     </td>
-                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
     </div>
 
     <script>
@@ -502,10 +552,27 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
                     scales: {
-                        y: { beginAtZero: false, min: 50, max: 100, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
-                        x: { grid: { display: false, drawBorder: false } }
+                        y: {
+                            beginAtZero: false,
+                            min: 50,
+                            max: 100,
+                            grid: {
+                                drawBorder: false,
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            }
+                        }
                     }
                 }
             });
@@ -537,10 +604,27 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
                     scales: {
-                        y: { beginAtZero: false, min: 40, max: 100, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
-                        x: { grid: { display: false, drawBorder: false } }
+                        y: {
+                            beginAtZero: false,
+                            min: 40,
+                            max: 100,
+                            grid: {
+                                drawBorder: false,
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            }
+                        }
                     }
                 }
             });
@@ -572,10 +656,27 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
                     scales: {
-                        y: { beginAtZero: false, min: 20, max: 40, grid: { drawBorder: false, color: 'rgba(0,0,0,0.05)' } },
-                        x: { grid: { display: false, drawBorder: false } }
+                        y: {
+                            beginAtZero: false,
+                            min: 20,
+                            max: 40,
+                            grid: {
+                                drawBorder: false,
+                                color: 'rgba(0,0,0,0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            }
+                        }
                     }
                 }
             });
@@ -583,19 +684,82 @@
             // Fungsi tombol refresh
             const refreshBtn = document.querySelector('button.bg-green-700');
             if (refreshBtn) {
-                refreshBtn.addEventListener('click', function() { window.location.reload(); });
+                refreshBtn.addEventListener('click', function() {
+                    window.location.reload();
+                });
             }
 
             // Fungsi tombol unduh Excel
             const exportExcelBtn = document.getElementById('exportExcelBtn');
             if (exportExcelBtn) {
                 exportExcelBtn.addEventListener('click', function() {
-                    alert('Fungsi unduh Excel akan diimplementasikan di sini\\n(Data akan diekspor dalam format .xlsx)');
+                    alert(
+                        'Fungsi unduh Excel akan diimplementasikan di sini\\n(Data akan diekspor dalam format .xlsx)');
                 });
             }
 
+            const manualStatuses = {
+                watering: document.getElementById('wateringManualStatus'),
+                roof: document.getElementById('roofManualStatus')
+            };
+            const wateringManualIcon = document.getElementById('wateringManualIcon');
+            const roofManualIcon = document.getElementById('roofManualIcon');
+            const manualButtonColors = [
+                'bg-gray-100', 'bg-blue-600', 'bg-red-500', 'bg-yellow-500', 'bg-green-600',
+                'text-gray-600', 'text-white', 'hover:bg-gray-200', 'hover:bg-blue-700',
+                'hover:bg-red-600', 'hover:bg-yellow-600', 'hover:bg-green-700'
+            ];
+            const manualActiveColors = {
+                watering: {
+                    ON: ['bg-blue-600', 'text-white', 'hover:bg-blue-700'],
+                    OFF: ['bg-red-500', 'text-white', 'hover:bg-red-600']
+                },
+                roof: {
+                    Buka: ['bg-yellow-500', 'text-white', 'hover:bg-yellow-600'],
+                    Tutup: ['bg-green-600', 'text-white', 'hover:bg-green-700']
+                }
+            };
+            const manualInactiveColors = ['bg-gray-100', 'text-gray-600', 'hover:bg-gray-200'];
+
+            document.querySelectorAll('.manual-control-btn').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const group = button.dataset.manualGroup;
+                    const value = button.dataset.manualValue;
+
+                    document.querySelectorAll(`[data-manual-group="${group}"]`).forEach(function(groupButton) {
+                        const isActive = groupButton === button;
+                        groupButton.classList.toggle('active', isActive);
+                        groupButton.classList.remove(...manualButtonColors);
+                        groupButton.classList.add(...(isActive
+                            ? manualActiveColors[group][groupButton.dataset.manualValue]
+                            : manualInactiveColors));
+                    });
+
+                    if (manualStatuses[group]) {
+                        manualStatuses[group].textContent = value === 'Buka' ? 'Terbuka' : (value === 'Tutup' ? 'Tertutup' : value);
+                    }
+
+                    if (group === 'watering' && wateringManualIcon) {
+                        wateringManualIcon.classList.remove('bg-blue-100', 'text-blue-600', 'bg-red-100',
+                            'text-red-600');
+                        wateringManualIcon.classList.add(...(value === 'ON' ? ['bg-blue-100', 'text-blue-600'] : [
+                            'bg-red-100', 'text-red-600'
+                        ]));
+                    }
+
+                    if (group === 'roof' && roofManualIcon) {
+                        roofManualIcon.classList.remove('bg-yellow-100', 'text-yellow-600', 'bg-green-100',
+                            'text-green-600');
+                        roofManualIcon.classList.add(...(value === 'Buka' ? ['bg-yellow-100', 'text-yellow-600'] : [
+                            'bg-green-100', 'text-green-600'
+                        ]));
+                    }
+                });
+            });
+
             // Toggle pompa
             let pompaState = {{ $pompa ? 'true' : 'false' }};
+
             function togglePompa() {
                 pompaState = !pompaState;
                 const indicator = document.getElementById('pompaIndicator');
@@ -620,16 +784,28 @@
             const switchStatus = document.getElementById('switchStatus');
             const onIcon = document.getElementById('onIcon');
             const offIcon = document.getElementById('offIcon');
+
             function updateSwitchStatus() {
                 if (switchToggle && switchToggle.checked) {
-                    if (switchStatus) { switchStatus.textContent = 'ACTIVE'; switchStatus.classList.remove('bg-gradient-to-r','from-rose-400','to-pink-500'); switchStatus.classList.add('bg-gradient-to-r','from-emerald-400','to-teal-500'); }
+                    if (switchStatus) {
+                        switchStatus.textContent = 'ACTIVE';
+                        switchStatus.classList.remove('bg-gradient-to-r', 'from-rose-400', 'to-pink-500');
+                        switchStatus.classList.add('bg-gradient-to-r', 'from-emerald-400', 'to-teal-500');
+                    }
                 } else {
-                    if (switchStatus) { switchStatus.textContent = 'INACTIVE'; switchStatus.classList.remove('bg-gradient-to-r','from-emerald-400','to-teal-500'); switchStatus.classList.add('bg-gradient-to-r','from-rose-400','to-pink-500'); }
+                    if (switchStatus) {
+                        switchStatus.textContent = 'INACTIVE';
+                        switchStatus.classList.remove('bg-gradient-to-r', 'from-emerald-400', 'to-teal-500');
+                        switchStatus.classList.add('bg-gradient-to-r', 'from-rose-400', 'to-pink-500');
+                    }
                 }
             }
-            if (switchToggle) { switchToggle.addEventListener('change', updateSwitchStatus); updateSwitchStatus(); }
-         });
-     </script>
+            if (switchToggle) {
+                switchToggle.addEventListener('change', updateSwitchStatus);
+                updateSwitchStatus();
+            }
+        });
+    </script>
 
     <style>
         @keyframes rain {
