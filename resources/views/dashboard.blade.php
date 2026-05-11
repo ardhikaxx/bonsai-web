@@ -726,34 +726,50 @@
                     const group = button.dataset.manualGroup;
                     const value = button.dataset.manualValue;
 
-                    document.querySelectorAll(`[data-manual-group="${group}"]`).forEach(function(groupButton) {
-                        const isActive = groupButton === button;
-                        groupButton.classList.toggle('active', isActive);
-                        groupButton.classList.remove(...manualButtonColors);
-                        groupButton.classList.add(...(isActive
-                            ? manualActiveColors[group][groupButton.dataset.manualValue]
-                            : manualInactiveColors));
+                    Swal.fire({
+                        title: 'Konfirmasi Tindakan',
+                        text: `Apakah Anda yakin ingin mengubah ${group} menjadi ${value}?`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#059669',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Ya, Lanjutkan!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Logic update state
+                            document.querySelectorAll(`[data-manual-group="${group}"]`).forEach(function(groupButton) {
+                                const isActive = groupButton === button;
+                                groupButton.classList.toggle('active', isActive);
+                                groupButton.classList.remove(...manualButtonColors);
+                                groupButton.classList.add(...(isActive
+                                    ? manualActiveColors[group][groupButton.dataset.manualValue]
+                                    : manualInactiveColors));
+                            });
+
+                            if (manualStatuses[group]) {
+                                manualStatuses[group].textContent = value === 'Buka' ? 'Terbuka' : (value === 'Tutup' ? 'Tertutup' : value);
+                            }
+
+                            if (group === 'watering' && wateringManualIcon) {
+                                wateringManualIcon.classList.remove('bg-blue-100', 'text-blue-600', 'bg-red-100',
+                                    'text-red-600');
+                                wateringManualIcon.classList.add(...(value === 'ON' ? ['bg-blue-100', 'text-blue-600'] : [
+                                    'bg-red-100', 'text-red-600'
+                                ]));
+                            }
+
+                            if (group === 'roof' && roofManualIcon) {
+                                roofManualIcon.classList.remove('bg-yellow-100', 'text-yellow-600', 'bg-green-100',
+                                    'text-green-600');
+                                roofManualIcon.classList.add(...(value === 'Buka' ? ['bg-yellow-100', 'text-yellow-600'] : [
+                                    'bg-green-100', 'text-green-600'
+                                ]));
+                            }
+                            
+                            Swal.fire('Berhasil!', `Tindakan ${group} ke ${value} telah dikirim.`, 'success');
+                        }
                     });
-
-                    if (manualStatuses[group]) {
-                        manualStatuses[group].textContent = value === 'Buka' ? 'Terbuka' : (value === 'Tutup' ? 'Tertutup' : value);
-                    }
-
-                    if (group === 'watering' && wateringManualIcon) {
-                        wateringManualIcon.classList.remove('bg-blue-100', 'text-blue-600', 'bg-red-100',
-                            'text-red-600');
-                        wateringManualIcon.classList.add(...(value === 'ON' ? ['bg-blue-100', 'text-blue-600'] : [
-                            'bg-red-100', 'text-red-600'
-                        ]));
-                    }
-
-                    if (group === 'roof' && roofManualIcon) {
-                        roofManualIcon.classList.remove('bg-yellow-100', 'text-yellow-600', 'bg-green-100',
-                            'text-green-600');
-                        roofManualIcon.classList.add(...(value === 'Buka' ? ['bg-yellow-100', 'text-yellow-600'] : [
-                            'bg-green-100', 'text-green-600'
-                        ]));
-                    }
                 });
             });
 
