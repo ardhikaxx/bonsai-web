@@ -1,0 +1,4 @@
+joblib
+mysql-connector-python
+numpy
+tensorflow

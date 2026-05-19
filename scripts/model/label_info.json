@@ -1,0 +1,18 @@
+{
+  "soil_threshold": 60.0,
+  "soil_saturated_threshold": 80.0,
+  "temp_high_threshold": 30.0,
+  "humidity_low_threshold": 50.0,
+  "look_back": 24,
+  "train_ratio": 0.6,
+  "features": [
+    "temperature_c",
+    "humidity_air_pct",
+    "soil_moisture_pct"
+  ],
+  "n_features": 3,
+  "train_label_0": 1163,
+  "train_label_1": 1864,
+  "test_label_0": 1409,
+  "test_label_1": 602
+}
