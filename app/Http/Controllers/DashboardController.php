@@ -2,119 +2,88 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\PredictionLog;
+use App\Models\SensorReading;
 
 class DashboardController extends Controller
 {
-     public function index()
+    public function index()
     {
-        // Data dummy untuk contoh
+        $latest = SensorReading::query()
+            ->latest('sensor_timestamp')
+            ->latest('id')
+            ->first();
+
+        $recentReadings = SensorReading::query()
+            ->latest('sensor_timestamp')
+            ->latest('id')
+            ->limit(6)
+            ->get()
+            ->reverse()
+            ->values();
+
+        $latestPrediction = PredictionLog::query()
+            ->latest('prediction_timestamp')
+            ->latest('id')
+            ->first();
+
         $data = [
-            'kelembapan' => 65,
-            'kelembapan_udara' => 55,
-            'suhu' => 25.5,
+            'kelembapan' => $latest?->soil_moisture_pct ?? 0,
+            'kelembapan_udara' => $latest?->humidity_air_pct ?? 0,
+            'suhu' => $latest?->temperature_c ?? 0,
             'hujan' => false,
-            'pompa' => true,  // Status pompa: true = ON, false = OFF
-            'riwayat' => $this->getRiwayatData(),
-            'prediksi' => $this->getPrediksiData(),
-            'grafik' => $this->getGrafikData()
+            'pompa' => strtolower((string) ($latestPrediction?->pump_status ?? 'off')) === 'on',
+            'riwayat' => $this->formatRiwayatData($recentReadings),
+            'prediksi' => $this->formatPrediksiData(),
+            'grafik' => $this->formatGrafikData($recentReadings),
         ];
 
         return view('dashboard', $data);
     }
 
-     private function getRiwayatData()
+    private function formatRiwayatData($readings): array
+    {
+        return $readings->map(function (SensorReading $reading) {
+            return [
+                'tanggal' => optional($reading->sensor_timestamp)->format('Y-m-d H:i:s') ?? $reading->created_at->format('Y-m-d H:i:s'),
+                'kelembapan' => round($reading->soil_moisture_pct, 2),
+                'kelembapan_udara' => round($reading->humidity_air_pct, 2),
+                'suhu' => round($reading->temperature_c, 2),
+                'hujan' => false,
+            ];
+        })->all();
+    }
+
+    private function formatGrafikData($readings): array
     {
         return [
-            [
-                'tanggal' => '2023-05-01 08:00', 
-                'kelembapan' => 62, 
-                'kelembapan_udara' => 58,
-                'suhu' => 26.5, 
-                'hujan' => false
-            ],
-            [
-                'tanggal' => '2023-05-01 12:00', 
-                'kelembapan' => 65, 
-                'kelembapan_udara' => 52,
-                'suhu' => 28.0, 
-                'hujan' => false
-            ],
-            [
-                'tanggal' => '2023-05-01 16:00', 
-                'kelembapan' => 68, 
-                'kelembapan_udara' => 62,
-                'suhu' => 27.0, 
-                'hujan' => true
-            ],
-            [
-                'tanggal' => '2023-05-02 08:00', 
-                'kelembapan' => 63, 
-                'kelembapan_udara' => 60,
-                'suhu' => 26.0, 
-                'hujan' => false
-            ],
-            [
-                'tanggal' => '2023-05-02 12:00', 
-                'kelembapan' => 67, 
-                'kelembapan_udara' => 55,
-                'suhu' => 29.0, 
-                'hujan' => false
-            ],
-            [
-                'tanggal' => '2023-05-02 16:00', 
-                'kelembapan' => 70, 
-                'kelembapan_udara' => 65,
-                'suhu' => 27.5, 
-                'hujan' => true
-            ],
+            'labels' => $readings->map(fn (SensorReading $reading) => optional($reading->sensor_timestamp)->format('H:i') ?? $reading->created_at->format('H:i'))->all(),
+            'kelembapan' => $readings->map(fn (SensorReading $reading) => round($reading->soil_moisture_pct, 2))->all(),
+            'kelembapan_udara' => $readings->map(fn (SensorReading $reading) => round($reading->humidity_air_pct, 2))->all(),
+            'suhu' => $readings->map(fn (SensorReading $reading) => round($reading->temperature_c, 2))->all(),
+            'hujan' => $readings->map(fn () => 0)->all(),
         ];
     }
 
-     private function getGrafikData()
+    private function formatPrediksiData(): array
     {
-        return [
-            'labels' => ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
-            'kelembapan' => [60, 62, 65, 68, 70, 67],          // Data kelembapan tanah
-            'kelembapan_udara' => [55, 58, 52, 62, 65, 60],    // Data kelembapan udara baru
-            'suhu' => [25.0, 24.5, 26.0, 28.5, 27.0, 26.0],
-            'hujan' => [0, 0, 0, 1, 1, 0]
-        ];
-    }
+        return PredictionLog::query()
+            ->latest('prediction_timestamp')
+            ->latest('id')
+            ->limit(6)
+            ->get()
+            ->reverse()
+            ->values()
+            ->map(function (PredictionLog $prediction) {
+                $pumpOn = strtolower((string) $prediction->pump_status) === 'on';
 
-    private function getPrediksiData()
-    {
-        return [
-            [
-                'tanggal' => now()->addHour()->format('Y-m-d H:i:s'),
-                'kelembapan_prediksi' => 62,
-                'status' => 'Tidak Siram',
-                'pompa_status' => false
-            ],
-            [
-                'tanggal' => now()->addHours(3)->format('Y-m-d H:i:s'),
-                'kelembapan_prediksi' => 58,
-                'status' => 'Tidak Siram',
-                'pompa_status' => false
-            ],
-            [
-                'tanggal' => now()->addHours(6)->format('Y-m-d H:i:s'),
-                'kelembapan_prediksi' => 38,
-                'status' => 'Siram',
-                'pompa_status' => true
-            ],
-            [
-                'tanggal' => now()->addHours(9)->format('Y-m-d H:i:s'),
-                'kelembapan_prediksi' => 42,
-                'status' => 'Tidak Siram',
-                'pompa_status' => false
-            ],
-            [
-                'tanggal' => now()->addHours(12)->format('Y-m-d H:i:s'),
-                'kelembapan_prediksi' => 35,
-                'status' => 'Siram',
-                'pompa_status' => true
-            ],
-        ];
+                return [
+                    'tanggal' => optional($prediction->prediction_timestamp)->format('Y-m-d H:i:s') ?? $prediction->created_at->format('Y-m-d H:i:s'),
+                    'kelembapan_prediksi' => round((float) $prediction->predicted_soil_moisture_pct, 2),
+                    'status' => $pumpOn ? 'Siram' : 'Tidak Siram',
+                    'pompa_status' => $pumpOn,
+                ];
+            })
+            ->all();
     }
 }

@@ -11,7 +11,8 @@
                     <p class="text-emerald-100 text-lg">Pemantauan real-time untuk koleksi bonsai Anda</p>
                 </div>
                 <div class="mt-4 md:mt-0">
-                    <div class="flex items-center space-x-3 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-sm rounded-xl px-5 py-3 shadow-lg cursor-pointer"
+                    <div id="headerPompaControl"
+                        class="flex items-center space-x-3 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-sm rounded-xl px-5 py-3 shadow-lg cursor-pointer"
                         onclick="togglePompa()">
                         <div class="flex items-center space-x-3">
                             <div id="pompaIndicator"
@@ -62,8 +63,8 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h2 class="text-lg font-semibold text-gray-700">Kelembapan Tanah</h2>
-                            <p class="text-4xl font-bold text-blue-600 mt-2">{{ $kelembapan }}%</p>
-                            <div class="mt-1">
+                            <p id="soilMoistureValue" class="text-4xl font-bold text-blue-600 mt-2">{{ $kelembapan }}%</p>
+                            <div id="soilMoistureStatus" class="mt-1">
                                 @if ($kelembapan < 40)
                                     <span class="text-xs px-2 py-1 rounded-full bg-red-100 text-red-800">Terlalu
                                         Kering</span>
@@ -86,7 +87,8 @@
                             <span>Basah</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                            <div class="bg-gradient-to-r from-blue-400 to-blue-600 h-full rounded-full transition-all duration-500"
+                            <div id="soilMoistureProgress"
+                                class="bg-gradient-to-r from-blue-400 to-blue-600 h-full rounded-full transition-all duration-500"
                                 style="width: {{ $kelembapan }}%"></div>
                         </div>
                     </div>
@@ -100,9 +102,9 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h2 class="text-lg font-semibold text-gray-700">Kelembapan Udara</h2>
-                            <p class="text-4xl font-bold text-green-600 mt-2">{{ $kelembapan_udara }}%</p>
+                            <p id="airHumidityValue" class="text-4xl font-bold text-green-600 mt-2">{{ $kelembapan_udara }}%</p>
                             <div class="mt-1">
-                                <span class="text-xs px-2 py-1 rounded-full bg-green-100 text-green-800">Normal</span>
+                                <span id="airHumidityStatus" class="text-xs px-2 py-1 rounded-full bg-green-100 text-green-800">Normal</span>
                             </div>
                         </div>
                         <div
@@ -116,7 +118,8 @@
                             <span>Tinggi</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                            <div class="bg-gradient-to-r from-green-400 to-green-600 h-full rounded-full transition-all duration-500"
+                            <div id="airHumidityProgress"
+                                class="bg-gradient-to-r from-green-400 to-green-600 h-full rounded-full transition-all duration-500"
                                 style="width: {{ $kelembapan_udara }}%"></div>
                         </div>
                     </div>
@@ -135,7 +138,7 @@
                                 <i class="fas fa-temperature-high text-orange-500"></i>
                                 <span>Suhu Lingkungan</span>
                             </h2>
-                            <p class="text-sm text-gray-500 mt-1">Update terakhir: {{ now()->format('H:i') }}</p>
+                            <p class="text-sm text-gray-500 mt-1">Update terakhir: <span id="sensorUpdatedAt">{{ now()->format('H:i') }}</span></p>
                         </div>
                         <div
                             class="px-6 py-4 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 text-blue-600 shadow-inner">
@@ -146,9 +149,9 @@
                     <!-- Nilai Suhu Utama -->
                     <div class="flex-1 flex flex-col justify-center items-center my-4">
                         <div class="relative">
-                            <p class="text-6xl font-bold text-orange-600 text-center">{{ $suhu }}°C</p>
+                            <p id="temperatureValue" class="text-6xl font-bold text-orange-600 text-center">{{ $suhu }}°C</p>
                             <!-- Indikator Status -->
-                            <div class="mt-3 flex justify-center">
+                            <div id="temperatureStatus" class="mt-3 flex justify-center">
                                 @if ($suhu < 20)
                                     <span
                                         class="text-xs px-3 py-1.5 rounded-full bg-blue-100 text-blue-800 font-medium d-flex justify-content-center align-items-center gap-1">
@@ -177,7 +180,8 @@
                             <span class="flex items-center"><i class="fas fa-temperature-high mr-1"></i> 40°C</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden shadow-inner">
-                            <div class="bg-gradient-to-r from-blue-400 via-orange-400 to-red-600 h-full rounded-full transition-all duration-500"
+                            <div id="temperatureProgress"
+                                class="bg-gradient-to-r from-blue-400 via-orange-400 to-red-600 h-full rounded-full transition-all duration-500"
                                 style="width: {{ (($suhu - 10) / 30) * 100 }}%"></div>
                         </div>
 
@@ -185,7 +189,7 @@
                         <div class="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
                             <div class="flex items-center text-sm text-gray-600">
                                 <i class="fas fa-info-circle text-orange-500 mr-2"></i>
-                                <span>
+                                <span id="temperatureRecommendation">
                                     @if ($suhu < 20)
                                         Rekomendasi: Tingkatkan suhu ruangan
                                     @elseif($suhu > 30)
@@ -207,25 +211,27 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h2 class="text-lg font-semibold text-gray-700">Sensor Hujan</h2>
-                            <p class="text-4xl font-bold mt-2 {{ $hujan ? 'text-red-600' : 'text-green-600' }}">
+                            <p id="weatherStatus"
+                                class="text-4xl font-bold mt-2 {{ $hujan ? 'text-red-600' : 'text-green-600' }}">
                                 {{ $hujan ? 'Hujan' : 'Cerah' }}
                             </p>
-                            <p class="text-sm mt-1 {{ $hujan ? 'text-red-500' : 'text-green-500' }}">
-                                <i class="fas {{ $hujan ? 'fa-umbrella' : 'fa-sun' }} mr-1"></i>
-                                Penutup: {{ $hujan ? 'Tertutup' : 'Terbuka' }}
+                            <p id="roofCoverLine" class="text-sm mt-1 {{ $hujan ? 'text-red-500' : 'text-green-500' }}">
+                                <i id="roofCoverIcon" class="fas {{ $hujan ? 'fa-umbrella' : 'fa-sun' }} mr-1"></i>
+                                Penutup: <span id="roofCoverStatus">{{ $hujan ? 'Tertutup' : 'Terbuka' }}</span>
                             </p>
                         </div>
-                        <div
+                        <div id="weatherIconBadge"
                             class="p-4 rounded-full bg-gradient-to-br {{ $hujan ? 'from-red-100 to-red-200 text-red-600' : 'from-green-100 to-green-200 text-green-600' }} shadow-inner">
-                            <i class="fas fa-cloud-{{ $hujan ? 'rain' : 'sun' }} text-3xl"></i>
+                            <i id="weatherCardIcon" class="fas fa-cloud-{{ $hujan ? 'rain' : 'sun' }} text-3xl"></i>
                         </div>
                     </div>
                     <div class="mt-6 flex justify-center">
-                        <div
+                        <div id="weatherVisual"
                             class="relative w-32 h-32 bg-gradient-to-br {{ $hujan ? 'from-gray-200 to-gray-300' : 'from-yellow-100 to-yellow-200' }} rounded-full flex items-center justify-center overflow-hidden shadow-inner">
                             <div class="absolute inset-0 flex items-center justify-center">
                                 <div class="w-24 h-24 rounded-full bg-white/80 backdrop-blur-sm"></div>
                             </div>
+                            <div id="weatherVisualContent">
                             @if ($hujan)
                                 <div class="absolute inset-0 animate-rain">
                                     @for ($i = 0; $i < 30; $i++)
@@ -250,6 +256,7 @@
                                     <i class="fas fa-cloud text-4xl text-gray-100"></i>
                                 </div>
                             @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -766,7 +773,11 @@
                                     'bg-green-100', 'text-green-600'
                                 ]));
                             }
-                            
+
+                            if (window.setFirebaseManualControl) {
+                                window.setFirebaseManualControl(group, value);
+                            }
+
                             Swal.fire('Berhasil!', `Tindakan ${group} ke ${value} telah dikirim.`, 'success');
                         }
                     });
@@ -823,6 +834,301 @@
         });
     </script>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+        import { getDatabase, ref, onValue, set, update } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAgjokNIX7UhQEmLhHWuSCo-K0uX_go0hE",
+            authDomain: "skripsi1-7a46f.firebaseapp.com",
+            databaseURL: "https://skripsi1-7a46f-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "skripsi1-7a46f",
+            storageBucket: "skripsi1-7a46f.firebasestorage.app",
+            messagingSenderId: "81924875777",
+            appId: "1:81924875777:web:a5f10372e3ca4de952c200",
+            measurementId: "G-95JH87702K"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        let pompaIsOn = {{ $pompa ? 'true' : 'false' }};
+
+        const manualButtonColors = [
+            'bg-gray-100', 'bg-blue-600', 'bg-red-500', 'bg-yellow-500', 'bg-green-600',
+            'text-gray-600', 'text-white', 'hover:bg-gray-200', 'hover:bg-blue-700',
+            'hover:bg-red-600', 'hover:bg-yellow-600', 'hover:bg-green-700'
+        ];
+        const manualInactiveColors = ['bg-gray-100', 'text-gray-600', 'hover:bg-gray-200'];
+        const manualActiveColors = {
+            watering: {
+                ON: ['bg-blue-600', 'text-white', 'hover:bg-blue-700'],
+                OFF: ['bg-red-500', 'text-white', 'hover:bg-red-600']
+            },
+            roof: {
+                Buka: ['bg-yellow-500', 'text-white', 'hover:bg-yellow-600'],
+                Tutup: ['bg-green-600', 'text-white', 'hover:bg-green-700']
+            }
+        };
+
+        function clamp(value, min = 0, max = 100) {
+            return Math.min(max, Math.max(min, Number(value) || 0));
+        }
+
+        function formatNumber(value) {
+            const number = Number(value);
+            if (!Number.isFinite(number)) {
+                return '0';
+            }
+            return number.toFixed(2).replace(/\.?0+$/, '');
+        }
+
+        function badge(text, classes, icon) {
+            return `<span class="text-xs px-2 py-1 rounded-full ${classes}">${icon ? `<i class="${icon} mr-1"></i>` : ''}${text}</span>`;
+        }
+
+        function setWidth(id, value) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.style.width = `${clamp(value)}%`;
+            }
+        }
+
+        function updateSensorCards(data) {
+            if (!data) {
+                return;
+            }
+
+            const soil = Number(data.kelembapan_tanah);
+            const air = Number(data.kelembapan_udara);
+            const temp = Number(data.suhu);
+
+            document.getElementById('soilMoistureValue').textContent = `${formatNumber(soil)}%`;
+            document.getElementById('airHumidityValue').textContent = `${formatNumber(air)}%`;
+            document.getElementById('temperatureValue').textContent = `${formatNumber(temp)}°C`;
+            setWidth('soilMoistureProgress', soil);
+            setWidth('airHumidityProgress', air);
+            setWidth('temperatureProgress', ((temp - 10) / 30) * 100);
+
+            const soilStatus = document.getElementById('soilMoistureStatus');
+            if (soilStatus) {
+                soilStatus.innerHTML = soil < 40
+                    ? badge('Terlalu Kering', 'bg-red-100 text-red-800')
+                    : soil > 80
+                        ? badge('Terlalu Basah', 'bg-blue-100 text-blue-800')
+                        : badge('Ideal', 'bg-green-100 text-green-800');
+            }
+
+            const airStatus = document.getElementById('airHumidityStatus');
+            if (airStatus) {
+                airStatus.textContent = air < 50 ? 'Rendah' : air > 85 ? 'Tinggi' : 'Normal';
+                airStatus.className = `text-xs px-2 py-1 rounded-full ${
+                    air < 50 ? 'bg-yellow-100 text-yellow-800' : air > 85 ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                }`;
+            }
+
+            const tempStatus = document.getElementById('temperatureStatus');
+            const tempRecommendation = document.getElementById('temperatureRecommendation');
+            if (tempStatus) {
+                tempStatus.innerHTML = temp < 20
+                    ? badge('Terlalu Dingin', 'bg-blue-100 text-blue-800 font-medium', 'fas fa-snowflake')
+                    : temp > 30
+                        ? badge('Terlalu Panas', 'bg-red-100 text-red-800 font-medium', 'fas fa-fire')
+                        : badge('Suhu Ideal', 'bg-green-100 text-green-800 font-medium', 'fas fa-check-circle');
+            }
+            if (tempRecommendation) {
+                tempRecommendation.textContent = temp < 20
+                    ? 'Rekomendasi: Tingkatkan suhu ruangan'
+                    : temp > 30
+                        ? 'Rekomendasi: Turunkan suhu ruangan'
+                        : 'Suhu dalam kondisi optimal';
+            }
+
+            if (data.waktu && document.getElementById('sensorUpdatedAt')) {
+                const time = String(data.waktu).split(' ')[1] || String(data.waktu);
+                document.getElementById('sensorUpdatedAt').textContent = time.slice(0, 5);
+            }
+        }
+
+        function setManualButtons(group, value) {
+            document.querySelectorAll(`[data-manual-group="${group}"]`).forEach(function(button) {
+                const isActive = button.dataset.manualValue === value;
+                button.classList.toggle('active', isActive);
+                button.classList.remove(...manualButtonColors);
+                button.classList.add(...(isActive ? manualActiveColors[group][value] : manualInactiveColors));
+            });
+        }
+
+        function updatePompaUI(value) {
+            const normalized = String(value || 'off').toLowerCase();
+            pompaIsOn = ['on', '1', 'true'].includes(normalized);
+
+            const indicator = document.getElementById('pompaIndicator');
+            const status = document.getElementById('pompaStatus');
+            const manualStatus = document.getElementById('wateringManualStatus');
+            const manualIcon = document.getElementById('wateringManualIcon');
+
+            indicator?.classList.toggle('bg-green-400', pompaIsOn);
+            indicator?.classList.toggle('animate-pulse', pompaIsOn);
+            indicator?.classList.toggle('bg-gray-400', !pompaIsOn);
+            status.textContent = pompaIsOn ? 'ON' : 'OFF';
+            status.className = `px-3 py-1 rounded-full text-sm font-bold ${
+                pompaIsOn ? 'bg-green-500/20 text-green-200' : 'bg-gray-500/20 text-gray-200'
+            }`;
+            if (manualStatus) {
+                manualStatus.textContent = pompaIsOn ? 'ON' : 'OFF';
+            }
+            if (manualIcon) {
+                manualIcon.className = `w-10 h-10 rounded-full flex items-center justify-center ${
+                    pompaIsOn ? 'bg-blue-100 text-blue-600' : 'bg-red-100 text-red-600'
+                }`;
+                manualIcon.innerHTML = '<i class="fas fa-tint"></i>';
+            }
+            setManualButtons('watering', pompaIsOn ? 'ON' : 'OFF');
+        }
+
+        function updateRoofUI(value) {
+            const isOpen = String(value || '').toLowerCase().includes('buka');
+            const buttonValue = isOpen ? 'Buka' : 'Tutup';
+            const status = document.getElementById('roofManualStatus');
+            const icon = document.getElementById('roofManualIcon');
+            const coverStatus = document.getElementById('roofCoverStatus');
+
+            if (status) {
+                status.textContent = isOpen ? 'Terbuka' : 'Tertutup';
+            }
+            if (coverStatus) {
+                coverStatus.textContent = isOpen ? 'Terbuka' : 'Tertutup';
+            }
+            if (icon) {
+                icon.className = `w-10 h-10 rounded-full flex items-center justify-center ${
+                    isOpen ? 'bg-yellow-100 text-yellow-600' : 'bg-green-100 text-green-600'
+                }`;
+                icon.innerHTML = '<i class="fas fa-warehouse"></i>';
+            }
+            setManualButtons('roof', buttonValue);
+        }
+
+        function renderRainDrops(total = 30) {
+            return Array.from({ length: total }).map((_, index) => {
+                const left = (index * 37) % 96 + 2;
+                const top = -18 - ((index * 11) % 42);
+                const duration = (0.65 + (index % 6) * 0.12).toFixed(2);
+                const delay = ((index % 10) * 0.13).toFixed(2);
+                const opacity = (0.45 + (index % 5) * 0.11).toFixed(2);
+
+                return `<div class="rain-drop absolute w-1 h-4 bg-blue-400 rounded-full"
+                    style="top: ${top}px; left: ${left}%; opacity: ${opacity}; animation-duration: ${duration}s; animation-delay: ${delay}s;"></div>`;
+            }).join('');
+        }
+
+        function updateWeatherUI(data) {
+            if (!data) {
+                return;
+            }
+
+            const payload = typeof data === 'object' ? data : { rooftop: data };
+            const roof = String(payload.rooftop || 'Tertutup');
+            const isOpen = roof.toLowerCase().includes('buka');
+            const showRainAnimation = !isOpen;
+
+            const weatherStatus = document.getElementById('weatherStatus');
+            const roofCoverLine = document.getElementById('roofCoverLine');
+            const roofCoverIcon = document.getElementById('roofCoverIcon');
+            const weatherIconBadge = document.getElementById('weatherIconBadge');
+            const weatherCardIcon = document.getElementById('weatherCardIcon');
+            const weatherVisual = document.getElementById('weatherVisual');
+            const weatherVisualContent = document.getElementById('weatherVisualContent');
+
+            if (weatherStatus) {
+                weatherStatus.textContent = showRainAnimation ? 'Hujan' : 'Kering';
+                weatherStatus.className = `text-4xl font-bold mt-2 ${showRainAnimation ? 'text-red-600' : 'text-green-600'}`;
+            }
+            if (roofCoverLine) {
+                roofCoverLine.className = `text-sm mt-1 ${isOpen ? 'text-green-500' : 'text-red-500'}`;
+            }
+            if (roofCoverIcon) {
+                roofCoverIcon.className = `fas ${isOpen ? 'fa-sun' : 'fa-umbrella'} mr-1`;
+            }
+            if (weatherIconBadge) {
+                weatherIconBadge.className = `p-4 rounded-full bg-gradient-to-br shadow-inner ${
+                    showRainAnimation ? 'from-red-100 to-red-200 text-red-600' : 'from-green-100 to-green-200 text-green-600'
+                }`;
+            }
+            if (weatherCardIcon) {
+                weatherCardIcon.className = `fas ${showRainAnimation ? 'fa-cloud-rain' : 'fa-cloud-sun'} text-3xl`;
+            }
+            if (weatherVisual) {
+                weatherVisual.className = `relative w-32 h-32 bg-gradient-to-br ${
+                    showRainAnimation ? 'from-gray-200 to-gray-300' : 'from-yellow-100 to-yellow-200'
+                } rounded-full flex items-center justify-center overflow-hidden shadow-inner`;
+            }
+            if (weatherVisualContent) {
+                weatherVisualContent.innerHTML = showRainAnimation
+                    ? `<div class="absolute inset-0 overflow-hidden pointer-events-none">
+                        ${renderRainDrops(30)}
+                    </div>
+                    <div class="absolute top-8 left-1/2 transform -translate-x-1/2">
+                        <i class="fas fa-cloud text-6xl text-gray-500"></i>
+                    </div>`
+                    : `<div class="absolute inset-0 flex z-3 items-center justify-center">
+                        <i class="fas fa-sun text-5xl text-yellow-400 animate-pulse"></i>
+                    </div>
+                    <div class="absolute top-1 right-4">
+                        <i class="fas fa-cloud text-4xl text-gray-100"></i>
+                    </div>
+                    <div class="absolute bottom-3 left-3">
+                        <i class="fas fa-cloud text-4xl text-gray-100"></i>
+                    </div>`;
+            }
+
+            updateRoofUI(roof);
+        }
+
+        function formatWibDateTime() {
+            const parts = new Intl.DateTimeFormat('en-CA', {
+                timeZone: 'Asia/Jakarta',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            }).formatToParts(new Date()).reduce((result, part) => {
+                result[part.type] = part.value;
+                return result;
+            }, {});
+
+            return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}:${parts.second}`;
+        }
+
+        window.setFirebaseManualControl = function(group, value) {
+            if (group === 'watering') {
+                return set(ref(db, 'Pompa/pompa'), value.toLowerCase());
+            }
+
+            if (group === 'roof') {
+                const isOpen = value === 'Buka';
+
+                return update(ref(db, 'rooftop'), {
+                    cuaca: isOpen ? 'Kering' : 'Hujan',
+                    rooftop: isOpen ? 'Terbuka' : 'Tertutup',
+                    waktu: formatWibDateTime()
+                });
+            }
+
+            return Promise.resolve();
+        };
+
+        window.togglePompa = function() {
+            return set(ref(db, 'Pompa/pompa'), pompaIsOn ? 'off' : 'on');
+        };
+
+        onValue(ref(db, 'bonsai'), (snapshot) => updateSensorCards(snapshot.val()));
+        onValue(ref(db, 'Pompa/pompa'), (snapshot) => updatePompaUI(snapshot.val()));
+        onValue(ref(db, 'rooftop'), (snapshot) => updateWeatherUI(snapshot.val()));
+    </script>
+
     <style>
         @keyframes rain {
             to {
@@ -834,6 +1140,13 @@
             position: relative;
             height: 100%;
             width: 100%;
+        }
+
+        .rain-drop {
+            animation-name: rain;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            box-shadow: 0 0 6px rgba(96, 165, 250, 0.35);
         }
 
         /* Transisi halus untuk semua elemen interaktif */

@@ -1,10 +1,13 @@
 /.phpunit.cache
+.phpunit.result.cache
 /node_modules
 /public/build
 /public/hot
 /public/storage
 /storage/*.key
 /vendor
+
+scripts/__pycache__/
 .env
 .env.backup
 .env.production
