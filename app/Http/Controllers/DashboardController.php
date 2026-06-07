@@ -2,30 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\PredictionLog;
 use App\Models\SensorReading;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        // Untuk kartu status (selalu ambil yang terbaru secara absolut)
         $latest = SensorReading::query()
             ->latest('sensor_timestamp')
             ->latest('id')
             ->first();
 
-        $recentReadings = SensorReading::query()
-            ->latest('sensor_timestamp')
-            ->latest('id')
-            ->limit(6)
-            ->get()
-            ->reverse()
-            ->values();
-
         $latestPrediction = PredictionLog::query()
             ->latest('prediction_timestamp')
             ->latest('id')
             ->first();
+
+        // Untuk riwayat dan grafik (terpengaruh filter)
+        $query = SensorReading::query();
+        if ($startDate) {
+            $query->whereDate('sensor_timestamp', '>=', $startDate);
+        }
+        if ($endDate) {
+            $query->whereDate('sensor_timestamp', '<=', $endDate);
+        }
+
+        $recentReadings = $query->latest('sensor_timestamp')
+            ->latest('id')
+            ->limit(100) // Batasi 100 data terakhir untuk grafik/tabel
+            ->get()
+            ->reverse()
+            ->values();
 
         $data = [
             'kelembapan' => $latest?->soil_moisture_pct ?? 0,
@@ -34,17 +48,78 @@ class DashboardController extends Controller
             'hujan' => false,
             'pompa' => strtolower((string) ($latestPrediction?->pump_status ?? 'off')) === 'on',
             'riwayat' => $this->formatRiwayatData($recentReadings),
-            'prediksi' => $this->formatPrediksiData(),
+            'prediksi' => $this->formatPrediksiData($recentReadings->pluck('id')),
             'grafik' => $this->formatGrafikData($recentReadings),
+            'filters' => [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+            ]
         ];
 
         return view('dashboard', $data);
     }
 
+    public function export(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $query = SensorReading::query();
+        if ($startDate) {
+            $query->whereDate('sensor_timestamp', '>=', $startDate);
+        }
+        if ($endDate) {
+            $query->whereDate('sensor_timestamp', '<=', $endDate);
+        }
+
+        $readings = $query->orderBy('sensor_timestamp', 'asc')->get();
+
+        $response = new StreamedResponse(function () use ($readings) {
+            $handle = fopen('php://output', 'w');
+            
+            // Header Excel/CSV
+            fputcsv($handle, [
+                'ID', 
+                'Waktu Sensor', 
+                'Kelembapan Tanah (%)', 
+                'Kelembapan Udara (%)', 
+                'Suhu (°C)', 
+                'Prediksi Kelembapan (%)', 
+                'Status Prediksi',
+                'Status Pompa'
+            ]);
+
+            foreach ($readings as $reading) {
+                $prediction = PredictionLog::where('sensor_reading_id', $reading->id)->first();
+                
+                fputcsv($handle, [
+                    $reading->id,
+                    $reading->sensor_timestamp?->format('Y-m-d H:i:s') ?? $reading->created_at->format('Y-m-d H:i:s'),
+                    round($reading->soil_moisture_pct, 2),
+                    round($reading->humidity_air_pct, 2),
+                    round($reading->temperature_c, 2),
+                    $prediction ? round((float) $prediction->predicted_soil_moisture_pct, 2) : '-',
+                    $prediction ? $prediction->prediction_class : '-',
+                    $prediction ? $prediction->pump_status : '-',
+                ]);
+            }
+
+            fclose($handle);
+        });
+
+        $filename = 'laporan_sensor_' . now()->format('Ymd_His') . '.csv';
+        
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"');
+
+        return $response;
+    }
+
     private function formatRiwayatData($readings): array
     {
-        return $readings->map(function (SensorReading $reading) {
+        return $readings->reverse()->values()->map(function (SensorReading $reading) {
             return [
+                'id' => $reading->id,
                 'tanggal' => optional($reading->sensor_timestamp)->format('Y-m-d H:i:s') ?? $reading->created_at->format('Y-m-d H:i:s'),
                 'kelembapan' => round($reading->soil_moisture_pct, 2),
                 'kelembapan_udara' => round($reading->humidity_air_pct, 2),
@@ -65,15 +140,18 @@ class DashboardController extends Controller
         ];
     }
 
-    private function formatPrediksiData(): array
+    private function formatPrediksiData($readingIds = null): array
     {
-        return PredictionLog::query()
-            ->latest('prediction_timestamp')
-            ->latest('id')
-            ->limit(6)
-            ->get()
-            ->reverse()
-            ->values()
+        $query = PredictionLog::query();
+        
+        if ($readingIds) {
+            $query->whereIn('sensor_reading_id', $readingIds);
+        } else {
+            $query->latest('prediction_timestamp')->latest('id')->limit(6);
+        }
+
+        return $query->get()
+            ->keyBy('sensor_reading_id')
             ->map(function (PredictionLog $prediction) {
                 $pumpOn = strtolower((string) $prediction->pump_status) === 'on';
 

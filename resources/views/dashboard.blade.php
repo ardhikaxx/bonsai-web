@@ -389,20 +389,73 @@
         <!-- Bagian Riwayat Data -->
         <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/20">
             <div class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-xl font-bold text-gray-700">Riwayat Data Sensor</h2>
-                    <div class="flex space-x-3">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-700">Riwayat Data Sensor</h2>
+                        @if($filters['start_date'] || $filters['end_date'])
+                            <p class="text-xs text-emerald-600 mt-1">
+                                <i class="fas fa-filter mr-1"></i> 
+                                Filter: {{ $filters['start_date'] ?? '...' }} s/d {{ $filters['end_date'] ?? '...' }}
+                                <a href="{{ route('dashboard') }}" class="ml-2 text-red-500 hover:underline">Hapus Filter</a>
+                            </p>
+                        @endif
+                    </div>
+                    <div class="flex space-x-3 w-full md:w-auto">
                         <button
-                            class="px-4 py-2 bg-gray-100 rounded-lg text-sm text-gray-600 hover:bg-gray-200 flex items-center">
+                            onclick="openFilterModal()"
+                            class="flex-1 md:flex-none px-4 py-2 bg-gray-100 rounded-lg text-sm text-gray-600 hover:bg-gray-200 flex items-center justify-center transition-all">
                             <i class="fas fa-filter mr-2"></i> Filter
                         </button>
-                        <button
-                            class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-emerald-700 flex items-center transition-all hover:shadow-lg"
+                        <a
+                            href="{{ route('export.excel', request()->all()) }}"
+                            class="flex-1 md:flex-none px-4 py-2 bg-green-600 text-white rounded-lg text-sm hover:bg-emerald-700 flex items-center justify-center transition-all hover:shadow-lg"
                             id="exportExcelBtn">
                             <i class="fas fa-file-excel mr-2"></i> Ekspor Excel
-                        </button>
+                        </a>
                     </div>
                 </div>
+
+                <!-- Modal Filter -->
+                <div id="filterModal" class="fixed inset-0 z-[60] hidden overflow-y-auto">
+                    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                        <div class="fixed inset-0 transition-opacity" aria-hidden="true" onclick="closeFilterModal()">
+                            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                        </div>
+                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                        <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                            <form action="{{ route('dashboard') }}" method="GET">
+                                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                    <div class="sm:flex sm:items-start">
+                                        <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                                            <h3 class="text-lg leading-6 font-bold text-gray-900 mb-4 flex items-center">
+                                                <i class="fas fa-calendar-alt text-emerald-600 mr-2"></i> Filter Rentang Tanggal
+                                            </h3>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Mulai</label>
+                                                    <input type="date" name="start_date" value="{{ $filters['start_date'] }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Selesai</label>
+                                                    <input type="date" name="end_date" value="{{ $filters['end_date'] }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+                                    <button type="submit" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2 bg-emerald-600 text-base font-medium text-white hover:bg-emerald-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                                        Terapkan Filter
+                                    </button>
+                                    <button type="button" onclick="closeFilterModal()" class="mt-3 w-full inline-flex justify-center rounded-xl border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm">
+                                        Batal
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="overflow-x-auto rounded-xl border border-gray-100 shadow-inner">
                     <table class="min-w-full divide-y divide-gray-200 text-center">
                         <thead class="bg-gray-50 text-left">
@@ -425,7 +478,7 @@
                         <tbody class="bg-white divide-y divide-gray-100 text-left">
                             @foreach ($riwayat as $data)
                                 @php
-                                    $dataPrediksi = $prediksi[$loop->index] ?? null;
+                                    $dataPrediksi = $prediksi[$data['id']] ?? null;
                                 @endphp
                                 <tr class="hover:bg-gray-50 transition-colors">
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -697,13 +750,17 @@
             }
 
             // Fungsi tombol unduh Excel
-            const exportExcelBtn = document.getElementById('exportExcelBtn');
-            if (exportExcelBtn) {
-                exportExcelBtn.addEventListener('click', function() {
-                    alert(
-                        'Fungsi unduh Excel akan diimplementasikan di sini\\n(Data akan diekspor dalam format .xlsx)');
-                });
-            }
+            // Tombol ini sekarang menggunakan link <a> langsung ke route ekspor
+
+            window.openFilterModal = function() {
+                document.getElementById('filterModal').classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            };
+
+            window.closeFilterModal = function() {
+                document.getElementById('filterModal').classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            };
 
             const manualStatuses = {
                 watering: document.getElementById('wateringManualStatus'),
