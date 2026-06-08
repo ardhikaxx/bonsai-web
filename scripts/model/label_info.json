@@ -11,8 +11,8 @@
     "soil_moisture_pct"
   ],
   "n_features": 3,
-  "train_label_0": 1163,
-  "train_label_1": 1864,
-  "test_label_0": 1409,
-  "test_label_1": 602
+  "train_label_0": 1216,
+  "train_label_1": 2257,
+  "test_label_0": 1689,
+  "test_label_1": 619
 }
