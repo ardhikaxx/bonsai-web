@@ -220,9 +220,14 @@ def run_loop(interval, once, min_readings):
     try:
         while True:
             try:
-                sensor = read_bonsai_sensor()
-                reading_id = insert_sensor_reading(connection, sensor)
-                predict_and_update(connection, weights, scaler, label_info, min_readings)
+                # Cek apakah sistem monitoring aktif
+                system_status = firebase_get("Pompa/system_active")
+                if str(system_status).lower() != "on":
+                    print(f"[IDLE] Sistem Monitoring OFF | Waktu: {now_wib().strftime('%H:%M:%S')}")
+                else:
+                    sensor = read_bonsai_sensor()
+                    reading_id = insert_sensor_reading(connection, sensor)
+                    predict_and_update(connection, weights, scaler, label_info, min_readings)
             except Exception as e: print(f"[ERROR] {e}")
             if once: break
             time.sleep(interval)

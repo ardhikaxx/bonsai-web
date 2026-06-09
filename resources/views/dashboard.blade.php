@@ -11,32 +11,32 @@
                     <p class="text-emerald-100 text-lg">Pemantauan real-time untuk koleksi bonsai Anda</p>
                 </div>
                 <div class="mt-4 md:mt-0">
-                    <div id="headerPompaControl"
+                    <div id="headerSistemControl"
                         class="flex items-center space-x-3 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 backdrop-blur-sm rounded-xl px-5 py-3 shadow-lg cursor-pointer"
-                        onclick="togglePompa()">
+                        onclick="toggleSistem()">
                         <div class="flex items-center space-x-3">
-                            <div id="pompaIndicator"
-                                class="w-3 h-3 rounded-full {{ $pompa ? 'bg-green-400 animate-pulse' : 'bg-gray-400' }}">
+                            <div id="sistemIndicator"
+                                class="w-3 h-3 rounded-full {{ $sistem ? 'bg-green-400 animate-pulse' : 'bg-gray-400' }}">
                             </div>
-                            <span class="text-white font-semibold">Pompa</span>
-                            <span id="pompaStatus"
-                                class="px-3 py-1 rounded-full text-sm font-bold {{ $pompa ? 'bg-green-500/20 text-green-200' : 'bg-gray-500/20 text-gray-200' }}">
-                                {{ $pompa ? 'ON' : 'OFF' }}
+                            <span class="text-white font-semibold">Monitoring</span>
+                            <span id="sistemStatus"
+                                class="px-3 py-1 rounded-full text-sm font-bold {{ $sistem ? 'bg-green-500/20 text-green-200' : 'bg-gray-500/20 text-gray-200' }}">
+                                {{ $sistem ? 'ON' : 'OFF' }}
                             </span>
                         </div>
                     </div>
                 </div>
 
                 <script>
-                    let pompaState = {{ $pompa ? 'true' : 'false' }};
+                    let sistemState = {{ $sistem ? 'true' : 'false' }};
 
-                    function togglePompa() {
-                        pompaState = !pompaState;
+                    function toggleSistem() {
+                        sistemState = !sistemState;
 
-                        const indicator = document.getElementById('pompaIndicator');
-                        const status = document.getElementById('pompaStatus');
+                        const indicator = document.getElementById('sistemIndicator');
+                        const status = document.getElementById('sistemStatus');
 
-                        if (pompaState) {
+                        if (sistemState) {
                             indicator.classList.remove('bg-gray-400');
                             indicator.classList.add('bg-green-400', 'animate-pulse');
                             status.classList.remove('bg-gray-500/20', 'text-gray-200');
@@ -48,6 +48,10 @@
                             status.classList.remove('bg-green-500/20', 'text-green-200');
                             status.classList.add('bg-gray-500/20', 'text-gray-200');
                             status.textContent = 'OFF';
+                        }
+                        
+                        if (window.setFirebaseSistemActive) {
+                            window.setFirebaseSistemActive(sistemState ? 'on' : 'off');
                         }
                     }
                 </script>
@@ -1149,6 +1153,10 @@
 
             return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}:${parts.minute}:${parts.second}`;
         }
+
+        window.setFirebaseSistemActive = function(value) {
+            return set(ref(db, 'Pompa/system_active'), value.toLowerCase());
+        };
 
         window.setFirebaseManualControl = function(group, value) {
             if (group === 'watering') {

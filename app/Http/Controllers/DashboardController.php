@@ -14,6 +14,15 @@ class DashboardController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
+        // Ambil status sistem dari Firebase (Manual fetch untuk kartu status)
+        $systemActive = false;
+        try {
+            $firebaseData = json_decode(file_get_contents(config('services.firebase.database_url') . '/Pompa.json'), true);
+            $systemActive = isset($firebaseData['system_active']) && strtolower((string)$firebaseData['system_active']) === 'on';
+        } catch (\Exception $e) {
+            // Fallback jika gagal
+        }
+
         // Untuk kartu status (selalu ambil yang terbaru secara absolut)
         $latest = SensorReading::query()
             ->latest('sensor_timestamp')
@@ -61,6 +70,7 @@ class DashboardController extends Controller
             'suhu' => $latest?->temperature_c ?? 0,
             'hujan' => false,
             'pompa' => strtolower((string) ($latestPrediction?->pump_status ?? 'off')) === 'on',
+            'sistem' => $systemActive,
             'riwayat' => $paginatedReadings, // Kirim objek paginator langsung
             'prediksi' => $this->formatPrediksiData(collect($paginatedReadings->items())->pluck('id')),
             'grafik' => $this->formatGrafikData($graphReadings),
