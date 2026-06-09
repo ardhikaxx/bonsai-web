@@ -137,6 +137,7 @@ def insert_sensor_reading(connection, sensor: dict) -> int:
     connection.commit()
     inserted_id = cursor.lastrowid
     cursor.close()
+    print(f"[INFO] Data sensor tersimpan (ID: {inserted_id}) | Waktu: {now.strftime('%H:%M:%S')}")
     return inserted_id
 
 def latest_sequence(connection, look_back: int, features: list[str]):

@@ -34,12 +34,26 @@ class DashboardController extends Controller
             $query->whereDate('sensor_timestamp', '<=', $endDate);
         }
 
-        $recentReadings = $query->latest('sensor_timestamp')
+        // Ambil data untuk grafik (10 data terbaru untuk divisualisasikan)
+        $graphReadings = (clone $query)->latest('sensor_timestamp')
             ->latest('id')
-            ->limit(100) // Batasi 100 data terakhir untuk grafik/tabel
+            ->limit(10)
             ->get()
             ->reverse()
             ->values();
+
+        // Ambil data untuk tabel dengan pagination (10 data per halaman, terbaru di atas)
+        $paginatedReadings = SensorReading::query()
+            ->when($startDate, function ($q) use ($startDate) {
+                return $q->whereDate('sensor_timestamp', '>=', $startDate);
+            })
+            ->when($endDate, function ($q) use ($endDate) {
+                return $q->whereDate('sensor_timestamp', '<=', $endDate);
+            })
+            ->latest('sensor_timestamp')
+            ->latest('id')
+            ->paginate(10)
+            ->appends($request->query());
 
         $data = [
             'kelembapan' => $latest?->soil_moisture_pct ?? 0,
@@ -47,9 +61,9 @@ class DashboardController extends Controller
             'suhu' => $latest?->temperature_c ?? 0,
             'hujan' => false,
             'pompa' => strtolower((string) ($latestPrediction?->pump_status ?? 'off')) === 'on',
-            'riwayat' => $this->formatRiwayatData($recentReadings),
-            'prediksi' => $this->formatPrediksiData($recentReadings->pluck('id')),
-            'grafik' => $this->formatGrafikData($recentReadings),
+            'riwayat' => $paginatedReadings, // Kirim objek paginator langsung
+            'prediksi' => $this->formatPrediksiData(collect($paginatedReadings->items())->pluck('id')),
+            'grafik' => $this->formatGrafikData($graphReadings),
             'filters' => [
                 'start_date' => $startDate,
                 'end_date' => $endDate,

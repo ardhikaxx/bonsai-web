@@ -138,7 +138,7 @@
                                 <i class="fas fa-temperature-high text-orange-500"></i>
                                 <span>Suhu Lingkungan</span>
                             </h2>
-                            <p class="text-sm text-gray-500 mt-1">Update terakhir: <span id="sensorUpdatedAt">{{ now()->format('H:i') }}</span></p>
+                            <p class="text-sm text-gray-500 mt-1">Update terakhir: <span id="sensorUpdatedAt">{{ now()->translatedFormat('H:i') }} WIB</span></p>
                         </div>
                         <div
                             class="px-6 py-4 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 text-blue-600 shadow-inner">
@@ -476,16 +476,16 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100 text-left">
-                            @foreach ($riwayat as $data)
+                            @foreach ($riwayat as $item)
                                 @php
-                                    $dataPrediksi = $prediksi[$data['id']] ?? null;
+                                    $dataPrediksi = $prediksi[$item->id] ?? null;
                                 @endphp
                                 <tr class="hover:bg-gray-50 transition-colors">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm font-medium text-gray-900">
-                                            {{ \Carbon\Carbon::parse($data['tanggal'])->format('d M Y') }}</div>
+                                            {{ \Carbon\Carbon::parse($item->sensor_timestamp)->translatedFormat('d F Y') }}</div>
                                         <div class="text-xs text-gray-500">
-                                            {{ \Carbon\Carbon::parse($data['tanggal'])->format('H:i') }}</div>
+                                            {{ \Carbon\Carbon::parse($item->sensor_timestamp)->translatedFormat('H:i') }} WIB</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
@@ -494,7 +494,7 @@
                                                 <i class="fas fa-seedling text-green-700 text-xs"></i>
                                             </div>
                                             <span
-                                                class="text-sm font-medium text-green-700">{{ $data['kelembapan'] }}%</span>
+                                                class="text-sm font-medium text-green-700">{{ round($item->soil_moisture_pct, 2) }}%</span>
                                         </div>
                                     </td>
 
@@ -505,7 +505,7 @@
                                                 <i class="fas fa-wind text-blue-500 text-xs"></i>
                                             </div>
                                             <span
-                                                class="text-sm font-medium text-blue-600">{{ $data['kelembapan_udara'] }}%</span>
+                                                class="text-sm font-medium text-blue-600">{{ round($item->humidity_air_pct, 2) }}%</span>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -514,15 +514,15 @@
                                                 class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center mr-2">
                                                 <i class="fas fa-thermometer-half text-yellow-600 text-xs"></i>
                                             </div>
-                                            <span class="text-sm font-medium text-yellow-700">{{ $data['suhu'] }}°C</span>
+                                            <span class="text-sm font-medium text-yellow-700">{{ round($item->temperature_c, 2) }}°C</span>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span
                                             class="px-3 py-1 inline-flex items-center justify-center gap-1.5 text-xs leading-5 font-semibold rounded-full min-w-[76px]
-                                    {{ $data['hujan'] ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
-                                            <i class="fas {{ $data['hujan'] ? 'fa-cloud-rain' : 'fa-sun' }} text-xs"></i>
-                                            {{ $data['hujan'] ? 'Hujan' : 'Cerah' }}
+                                    {{ $item->hujan ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
+                                            <i class="fas {{ $item->hujan ? 'fa-cloud-rain' : 'fa-sun' }} text-xs"></i>
+                                            {{ $item->hujan ? 'Hujan' : 'Cerah' }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -536,7 +536,7 @@
                                                     class="text-sm font-medium text-blue-600">{{ $dataPrediksi['kelembapan_prediksi'] }}%</span>
                                             </div>
                                         @else
-                                            <span class="text-sm text-gray-400">-</span>
+                                            <span class="text-sm text-gray-400 italic">Memproses...</span>
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -549,7 +549,7 @@
                                                 {{ $dataPrediksi['status'] }}
                                             </span>
                                         @else
-                                            <span class="text-sm text-gray-400">-</span>
+                                            <span class="text-sm text-gray-400 italic">Memproses...</span>
                                         @endif
                                     </td>
                                 </tr>
@@ -557,26 +557,8 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="mt-4 flex items-center justify-between">
-                    <div class="text-sm text-gray-500">
-                        Menampilkan <span class="font-medium">1</span> sampai <span class="font-medium">6</span> dari
-                        <span class="font-medium">6</span> entri
-                    </div>
-                    <div class="flex space-x-2">
-                        <button
-                            class="px-3 py-1 bg-gray-100 rounded-lg text-sm text-gray-600 hover:bg-gray-200 disabled:opacity-50"
-                            disabled>
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <button class="px-3 py-1 bg-emerald-600 text-white rounded-lg text-sm hover:bg-emerald-700">
-                            1
-                        </button>
-                        <button
-                            class="px-3 py-1 bg-gray-100 rounded-lg text-sm text-gray-600 hover:bg-gray-200 disabled:opacity-50"
-                            disabled>
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
+                <div class="mt-4">
+                    {{ $riwayat->links() }}
                 </div>
             </div>
         </div>
@@ -1002,7 +984,7 @@
 
             if (data.waktu && document.getElementById('sensorUpdatedAt')) {
                 const time = String(data.waktu).split(' ')[1] || String(data.waktu);
-                document.getElementById('sensorUpdatedAt').textContent = time.slice(0, 5);
+                document.getElementById('sensorUpdatedAt').textContent = time.slice(0, 5) + ' WIB';
             }
         }
 
