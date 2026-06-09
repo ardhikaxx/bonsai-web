@@ -567,12 +567,16 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Inisialisasi Chart Variables agar bisa diakses global untuk update
+            let kelembapanChart, kelembapanUdaraChart, suhuChart;
+            let lastSensorId = {{ $riwayat->first()?->id ?? 0 }};
+
             // Grafik Kelembapan Tanah
             const kelembapanCtx = document.getElementById('kelembapanChart').getContext('2d');
             const kelembapanGradient = kelembapanCtx.createLinearGradient(0, 0, 0, 150);
             kelembapanGradient.addColorStop(0, 'rgba(59, 130, 246, 0.3)');
             kelembapanGradient.addColorStop(1, 'rgba(59, 130, 246, 0.1)');
-            new Chart(kelembapanCtx, {
+            kelembapanChart = new Chart(kelembapanCtx, {
                 type: 'line',
                 data: {
                     labels: @json($grafik['labels']),
@@ -624,7 +628,7 @@
             const kelembapanUdaraGradient = kelembapanUdaraCtx.createLinearGradient(0, 0, 0, 150);
             kelembapanUdaraGradient.addColorStop(0, 'rgba(34, 197, 94, 0.3)');
             kelembapanUdaraGradient.addColorStop(1, 'rgba(34, 197, 94, 0.1)');
-            new Chart(kelembapanUdaraCtx, {
+            kelembapanUdaraChart = new Chart(kelembapanUdaraCtx, {
                 type: 'line',
                 data: {
                     labels: @json($grafik['labels']),
@@ -676,7 +680,7 @@
             const suhuGradient = suhuCtx.createLinearGradient(0, 0, 0, 150);
             suhuGradient.addColorStop(0, 'rgba(249, 115, 22, 0.3)');
             suhuGradient.addColorStop(1, 'rgba(249, 115, 22, 0.1)');
-            new Chart(suhuCtx, {
+            suhuChart = new Chart(suhuCtx, {
                 type: 'line',
                 data: {
                     labels: @json($grafik['labels']),
@@ -723,7 +727,12 @@
                 }
             });
 
-            // Fungsi tombol refresh
+            // Auto-refresh halaman setiap 4 menit (240.000 ms) agar selaras dengan worker
+            setTimeout(function() {
+                window.location.reload();
+            }, 240000);
+
+            // Fungsi tombol refresh manual
             const refreshBtn = document.querySelector('button.bg-green-700');
             if (refreshBtn) {
                 refreshBtn.addEventListener('click', function() {

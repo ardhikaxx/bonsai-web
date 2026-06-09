@@ -152,9 +152,25 @@ def latest_sequence(connection, look_back: int, features: list[str]):
 def irrigation_reason(temp_c, humidity_air, soil_actual, predicted_soil, label_info):
     soil_threshold = float(label_info.get("soil_threshold", 60.0))
     saturated_threshold = float(label_info.get("soil_saturated_threshold", 80.0))
-    if soil_actual > saturated_threshold: return "off", "overwatering_guard_off"
-    if soil_actual < soil_threshold: return "on", "actual_soil_dry_on"
-    if predicted_soil < soil_threshold: return "on", "predicted_soil_dry_on"
+    temp_high_threshold = float(label_info.get("temp_high_threshold", 32.0))
+    hum_low_threshold = float(label_info.get("hum_low_threshold", 50.0))
+
+    # 1. PERTAHANAN UTAMA: Cegah Overwatering jika kelembapan aktual > 80%
+    if soil_actual > saturated_threshold:
+        return "off", "overwatering_guard_off"
+
+    # 2. KONDISI UTAMA: Tanah aktual sudah kering
+    if soil_actual < soil_threshold:
+        return "on", "actual_soil_dry_on"
+
+    # 3. KONDISI PREDIKSI: AI memprediksi tanah akan kering
+    if predicted_soil < soil_threshold:
+        # Tambahan: Cek Suhu Tinggi & Kelembapan Rendah untuk penyiraman dini
+        if temp_c > temp_high_threshold and humidity_air < hum_low_threshold:
+            return "on", "early_watering_hot_dry_on"
+        
+        return "on", "predicted_soil_dry_on"
+
     return "off", "normal_off"
 
 def pad_sequence(seq, target_len):
