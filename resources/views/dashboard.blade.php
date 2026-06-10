@@ -28,15 +28,15 @@
                 </div>
 
                 <script>
-                    let sistemState = {{ $sistem ? 'true' : 'false' }};
+                    window.sistemState = {{ $sistem ? 'true' : 'false' }};
 
-                    function toggleSistem() {
-                        sistemState = !sistemState;
-
+                    function updateSistemUI(isActive) {
                         const indicator = document.getElementById('sistemIndicator');
                         const status = document.getElementById('sistemStatus');
+                        
+                        if (!indicator || !status) return;
 
-                        if (sistemState) {
+                        if (isActive) {
                             indicator.classList.remove('bg-gray-400');
                             indicator.classList.add('bg-green-400', 'animate-pulse');
                             status.classList.remove('bg-gray-500/20', 'text-gray-200');
@@ -49,9 +49,20 @@
                             status.classList.add('bg-gray-500/20', 'text-gray-200');
                             status.textContent = 'OFF';
                         }
+                    }
+
+                    function toggleSistem() {
+                        window.sistemState = !window.sistemState;
+                        updateSistemUI(window.sistemState);
                         
                         if (window.setFirebaseSistemActive) {
-                            window.setFirebaseSistemActive(sistemState ? 'on' : 'off');
+                            window.setFirebaseSistemActive(window.sistemState ? 'on' : 'off')
+                                .catch(err => {
+                                    console.error("Firebase Error:", err);
+                                    // Rollback UI if failed
+                                    window.sistemState = !window.sistemState;
+                                    updateSistemUI(window.sistemState);
+                                });
                         }
                     }
                 </script>
@@ -731,10 +742,10 @@
                 }
             });
 
-            // Auto-refresh halaman setiap 4 menit (240.000 ms) agar selaras dengan worker
+            // Auto-refresh halaman setiap 1 menit (60.000 ms)
             setTimeout(function() {
                 window.location.reload();
-            }, 240000);
+            }, 60000);
 
             // Fungsi tombol refresh manual
             const refreshBtn = document.querySelector('button.bg-green-700');
@@ -1183,6 +1194,15 @@
         onValue(ref(db, 'bonsai'), (snapshot) => updateSensorCards(snapshot.val()));
         onValue(ref(db, 'Pompa/pompa'), (snapshot) => updatePompaUI(snapshot.val()));
         onValue(ref(db, 'rooftop'), (snapshot) => updateWeatherUI(snapshot.val()));
+        onValue(ref(db, 'Pompa/system_active'), (snapshot) => {
+            const val = snapshot.val();
+            if (val) {
+                window.sistemState = val.toLowerCase() === 'on';
+                if (typeof updateSistemUI === 'function') {
+                    updateSistemUI(window.sistemState);
+                }
+            }
+        });
     </script>
 
     <style>

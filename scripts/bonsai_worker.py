@@ -97,16 +97,29 @@ def mysql_config() -> dict:
 def firebase_url(path: str) -> str:
     return f"{FIREBASE_DATABASE_URL.rstrip('/')}/{path.strip('/')}.json"
 
-def firebase_get(path: str):
-    request = urllib.request.Request(firebase_url(path), method="GET")
-    with urllib.request.urlopen(request, timeout=15) as response:
-        payload = response.read().decode("utf-8")
-    return json.loads(payload) if payload else None
+def firebase_get(path: str, retries=3):
+    for i in range(retries):
+        try:
+            request = urllib.request.Request(firebase_url(path), method="GET")
+            with urllib.request.urlopen(request, timeout=20) as response:
+                payload = response.read().decode("utf-8")
+            return json.loads(payload) if payload else None
+        except (urllib.error.URLError, TimeoutError) as e:
+            if i == retries - 1: raise
+            print(f"[RETRY] Firebase GET failed: {e}. Retrying {i+1}/{retries}...")
+            time.sleep(2)
 
-def firebase_put(path: str, value) -> None:
+def firebase_put(path: str, value, retries=3) -> None:
     body = json.dumps(value).encode("utf-8")
-    request = urllib.request.Request(firebase_url(path), data=body, headers={"Content-Type": "application/json"}, method="PUT")
-    with urllib.request.urlopen(request, timeout=15) as response: response.read()
+    for i in range(retries):
+        try:
+            request = urllib.request.Request(firebase_url(path), data=body, headers={"Content-Type": "application/json"}, method="PUT")
+            with urllib.request.urlopen(request, timeout=20) as response: response.read()
+            return
+        except (urllib.error.URLError, TimeoutError) as e:
+            if i == retries - 1: raise
+            print(f"[RETRY] Firebase PUT failed: {e}. Retrying {i+1}/{retries}...")
+            time.sleep(2)
 
 def ensure_tables(connection) -> None:
     cursor = connection.cursor()
@@ -222,12 +235,16 @@ def run_loop(interval, once, min_readings):
             try:
                 # Cek apakah sistem monitoring aktif
                 system_status = firebase_get("Pompa/system_active")
+                print(f"[DEBUG] Firebase system_active: '{system_status}' | Waktu: {now_wib().strftime('%H:%M:%S')}")
+                
                 if str(system_status).lower() != "on":
-                    print(f"[IDLE] Sistem Monitoring OFF | Waktu: {now_wib().strftime('%H:%M:%S')}")
+                    print(f"[IDLE] Sistem Monitoring OFF. Menunggu {interval} detik...")
                 else:
+                    print(f"[PROCESS] Sistem Monitoring ON. Mengambil data sensor...")
                     sensor = read_bonsai_sensor()
                     reading_id = insert_sensor_reading(connection, sensor)
                     predict_and_update(connection, weights, scaler, label_info, min_readings)
+                    print(f"[SUCCESS] Data diproses. Menunggu {interval} detik...")
             except Exception as e: print(f"[ERROR] {e}")
             if once: break
             time.sleep(interval)
