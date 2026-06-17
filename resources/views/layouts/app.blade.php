@@ -17,8 +17,21 @@
         }
 
         function logout() {
-            localStorage.removeItem('userEmail');
-            window.location.href = '/';
+            Swal.fire({
+                title: 'Konfirmasi Logout',
+                text: "Apakah Anda yakin ingin keluar?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Keluar!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('userEmail');
+                    window.location.href = '/';
+                }
+            });
         }
     </script>
 </head>
