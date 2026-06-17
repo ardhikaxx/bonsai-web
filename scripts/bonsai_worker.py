@@ -165,7 +165,7 @@ def latest_sequence(connection, look_back: int, features: list[str]):
 def irrigation_reason(temp_c, humidity_air, soil_actual, predicted_soil, label_info):
     soil_threshold = float(label_info.get("soil_threshold", 60.0))
     saturated_threshold = float(label_info.get("soil_saturated_threshold", 80.0))
-    temp_high_threshold = float(label_info.get("temp_high_threshold", 32.0))
+    temp_high_threshold = float(label_info.get("temp_high_threshold", 30.0))
     hum_low_threshold = float(label_info.get("hum_low_threshold", 50.0))
 
     # 1. PERTAHANAN UTAMA: Cegah Overwatering jika kelembapan aktual > 80%

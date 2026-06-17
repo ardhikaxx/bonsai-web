@@ -537,7 +537,7 @@
                                             class="px-3 py-1 inline-flex items-center justify-center gap-1.5 text-xs leading-5 font-semibold rounded-full min-w-[76px]
                                     {{ $item->hujan ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
                                             <i class="fas {{ $item->hujan ? 'fa-cloud-rain' : 'fa-sun' }} text-xs"></i>
-                                            {{ $item->hujan ? 'Hujan' : 'Cerah' }}
+                                            {{ $item->hujan ? 'Hujan' : 'Kering' }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -742,10 +742,10 @@
                 }
             });
 
-            // Auto-refresh halaman setiap 1 menit (60.000 ms)
+            // Auto-refresh halaman setiap 4 menit (240.000 ms)
             setTimeout(function() {
                 window.location.reload();
-            }, 60000);
+            }, 240000);
 
             // Fungsi tombol refresh manual
             const refreshBtn = document.querySelector('button.bg-green-700');
