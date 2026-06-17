@@ -97,46 +97,37 @@ class DashboardController extends Controller
         }
 
         $readings = $query->orderBy('sensor_timestamp', 'asc')->get();
+        $predictions = PredictionLog::whereIn('sensor_reading_id', $readings->pluck('id'))->get()->keyBy('sensor_reading_id');
 
-        $response = new StreamedResponse(function () use ($readings) {
-            $handle = fopen('php://output', 'w');
+        $exportData = $readings->map(function ($reading) use ($predictions) {
+            $prediction = $predictions->get($reading->id);
             
-            // Header Excel/CSV
-            fputcsv($handle, [
-                'ID', 
-                'Waktu Sensor', 
-                'Kelembapan Tanah (%)', 
-                'Kelembapan Udara (%)', 
-                'Suhu (°C)', 
-                'Prediksi Kelembapan (%)', 
-                'Status Prediksi',
-                'Status Pompa'
-            ]);
-
-            foreach ($readings as $reading) {
-                $prediction = PredictionLog::where('sensor_reading_id', $reading->id)->first();
-                
-                fputcsv($handle, [
-                    $reading->id,
-                    $reading->sensor_timestamp?->format('Y-m-d H:i:s') ?? $reading->created_at->format('Y-m-d H:i:s'),
-                    round($reading->soil_moisture_pct, 2),
-                    round($reading->humidity_air_pct, 2),
-                    round($reading->temperature_c, 2),
-                    $prediction ? round((float) $prediction->predicted_soil_moisture_pct, 2) : '-',
-                    $prediction ? $prediction->prediction_class : '-',
-                    $prediction ? $prediction->pump_status : '-',
-                ]);
-            }
-
-            fclose($handle);
+            return [
+                'ID' => $reading->id,
+                'Waktu Sensor' => $reading->sensor_timestamp?->format('Y-m-d H:i:s') ?? $reading->created_at->format('Y-m-d H:i:s'),
+                'Kelembapan Tanah (%)' => round($reading->soil_moisture_pct, 2),
+                'Kelembapan Udara (%)' => round($reading->humidity_air_pct, 2),
+                'Suhu (°C)' => round($reading->temperature_c, 2),
+                'Prediksi Kelembapan (%)' => $prediction ? round((float) $prediction->predicted_soil_moisture_pct, 2) : '-',
+                'Status Prediksi' => $prediction ? $prediction->prediction_class : '-',
+                'Status Pompa' => $prediction ? $prediction->pump_status : '-',
+            ];
         });
 
-        $filename = 'laporan_sensor_' . now()->format('Ymd_His') . '.csv';
+        $filename = 'laporan_sensor_' . now()->format('Ymd_His') . '.xlsx';
         
-        $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"');
+        $style = (new \OpenSpout\Common\Entity\Style\Style())
+            ->setCellAlignment(\OpenSpout\Common\Entity\Style\CellAlignment::CENTER);
+            
+        $headerStyle = (clone $style)->setFontBold();
 
-        return $response;
+        return (new \Rap2hpoutre\FastExcel\FastExcel($exportData))
+            ->headerStyle($headerStyle)
+            ->rowsStyle($style)
+            ->configureOptionsUsing(function ($options) {
+                $options->DEFAULT_COLUMN_WIDTH = 25;
+            })
+            ->download($filename);
     }
 
     private function formatRiwayatData($readings): array

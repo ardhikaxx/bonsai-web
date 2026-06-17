@@ -10,6 +10,17 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <script>
+        // Redirect ke halaman login jika belum login
+        if (!localStorage.getItem('userEmail')) {
+            window.location.href = '/';
+        }
+
+        function logout() {
+            localStorage.removeItem('userEmail');
+            window.location.href = '/';
+        }
+    </script>
 </head>
 
 <body class="bg-gray-100">
@@ -22,10 +33,13 @@
                         <i class="fas fa-tree text-2xl"></i>
                         <h1 class="text-2xl font-bold">BonsAI</h1>
                     </div>
-                    <div class="flex items-center space-x-4">
-                        <span class="text-sm">Last updated: {{ now()->format('d M Y H:i') }}</span>
-                        <button class="bg-green-700 hover:bg-green-800 px-4 py-2 rounded-lg flex items-center">
-                            <i class="fas fa-sync-alt mr-2"></i> Refresh
+                    <div class="flex items-center space-x-2 md:space-x-4">
+                        <span class="text-xs md:text-sm hidden sm:inline-block">Last updated: {{ now()->format('d M Y H:i') }}</span>
+                        <button class="bg-green-700 hover:bg-green-800 px-3 md:px-4 py-2 rounded-lg flex items-center text-sm md:text-base">
+                            <i class="fas fa-sync-alt mr-1 md:mr-2"></i> <span class="hidden md:inline">Refresh</span>
+                        </button>
+                        <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-3 md:px-4 py-2 rounded-lg flex items-center text-sm md:text-base transition">
+                            <i class="fas fa-sign-out-alt mr-1 md:mr-2"></i> <span class="hidden md:inline">Logout</span>
                         </button>
                     </div>
                 </div>
