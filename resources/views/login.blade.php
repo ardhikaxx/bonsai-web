@@ -24,23 +24,7 @@
         </div>
 
         <div class="space-y-5">
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-                <input type="email" id="email" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors bg-gray-50 focus:bg-white" placeholder="admin@example.com">
-            </div>
-            <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
-                <input type="password" id="password" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors bg-gray-50 focus:bg-white" placeholder="••••••••">
-            </div>
-            <button id="emailLoginBtn" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-green-700 active:transform active:scale-95 transition-all shadow-lg hover:shadow-green-500/30">
-                Login
-            </button>
 
-            <div class="relative flex items-center py-3">
-                <div class="flex-grow border-t border-gray-200"></div>
-                <span class="flex-shrink-0 mx-4 text-gray-400 text-sm font-medium">ATAU</span>
-                <div class="flex-grow border-t border-gray-200"></div>
-            </div>
 
             <button id="googleLoginBtn" class="w-full bg-white border-2 border-gray-200 text-gray-700 font-bold py-3 px-4 rounded-xl hover:bg-gray-50 hover:border-gray-300 active:transform active:scale-95 transition-all flex items-center justify-center shadow-sm">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo" class="w-6 h-6 mr-3">
@@ -52,7 +36,7 @@
     <!-- Firebase SDK menggunakan ES Modules untuk browser -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-analytics.js";
 
         const firebaseConfig = {
@@ -72,35 +56,7 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        const emailLoginBtn = document.getElementById('emailLoginBtn');
-        const googleLoginBtn = document.getElementById('googleLoginBtn');
-
-        // Login Email & Password
-        emailLoginBtn.addEventListener('click', () => {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            if (!email || !password) {
-                Swal.fire('Error', 'Email dan password harus diisi', 'warning');
-                return;
-            }
-
-            emailLoginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
-            emailLoginBtn.disabled = true;
-
-            signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    localStorage.setItem('userEmail', userCredential.user.email);
-                    window.location.href = '/dashboard';
-                })
-                .catch((error) => {
-                    Swal.fire('Login Gagal', 'Kredensial tidak valid atau salah.', 'error');
-                    emailLoginBtn.innerHTML = 'Login';
-                    emailLoginBtn.disabled = false;
-                });
-        });
-
-        // Login Google
+        const googleLoginBtn = document.getElementById('googleLoginBtn');        // Login Google
         googleLoginBtn.addEventListener('click', () => {
             // Disable button untuk mencegah double-click
             const originalContent = googleLoginBtn.innerHTML;
