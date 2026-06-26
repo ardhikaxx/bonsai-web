@@ -228,7 +228,7 @@
                             <h2 class="text-lg font-semibold text-gray-700">Sensor Hujan</h2>
                             <p id="weatherStatus"
                                 class="text-4xl font-bold mt-2 {{ $hujan ? 'text-red-600' : 'text-green-600' }}">
-                                {{ $hujan ? 'Hujan' : 'Cerah' }}
+                                {{ $hujan ? 'Hujan' : 'Kering' }}
                             </p>
                             <p id="roofCoverLine" class="text-sm mt-1 {{ $hujan ? 'text-red-500' : 'text-green-500' }}">
                                 <i id="roofCoverIcon" class="fas {{ $hujan ? 'fa-umbrella' : 'fa-sun' }} mr-1"></i>
