@@ -228,7 +228,7 @@
                             <h2 class="text-lg font-semibold text-gray-700">Sensor Hujan</h2>
                             <p id="weatherStatus"
                                 class="text-4xl font-bold mt-2 {{ $hujan ? 'text-red-600' : 'text-green-600' }}">
-                                {{ $hujan ? 'Hujan' : 'Kering' }}
+                                {{ $hujan ? 'Hujan' : 'Cerah' }}
                             </p>
                             <p id="roofCoverLine" class="text-sm mt-1 {{ $hujan ? 'text-red-500' : 'text-green-500' }}">
                                 <i id="roofCoverIcon" class="fas {{ $hujan ? 'fa-umbrella' : 'fa-sun' }} mr-1"></i>
@@ -537,7 +537,7 @@
                                             class="px-3 py-1 inline-flex items-center justify-center gap-1.5 text-xs leading-5 font-semibold rounded-full min-w-[76px]
                                     {{ $item->hujan ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}">
                                             <i class="fas {{ $item->hujan ? 'fa-cloud-rain' : 'fa-sun' }} text-xs"></i>
-                                            {{ $item->hujan ? 'Hujan' : 'Kering' }}
+                                            {{ $item->hujan ? 'Hujan' : 'Cerah' }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -1103,7 +1103,7 @@
             const weatherVisualContent = document.getElementById('weatherVisualContent');
 
             if (weatherStatus) {
-                weatherStatus.textContent = showRainAnimation ? 'Hujan' : 'Kering';
+                weatherStatus.textContent = showRainAnimation ? 'Hujan' : 'Cerah';
                 weatherStatus.className = `text-4xl font-bold mt-2 ${showRainAnimation ? 'text-red-600' : 'text-green-600'}`;
             }
             if (roofCoverLine) {
@@ -1178,7 +1178,7 @@
                 const isOpen = value === 'Buka';
 
                 return update(ref(db, 'rooftop'), {
-                    cuaca: isOpen ? 'Kering' : 'Hujan',
+                    cuaca: isOpen ? 'Cerah' : 'Hujan',
                     rooftop: isOpen ? 'Terbuka' : 'Tertutup',
                     waktu: formatWibDateTime()
                 });
