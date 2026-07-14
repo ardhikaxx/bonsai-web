@@ -61,6 +61,24 @@ In order to ensure that the Laravel community is welcoming to all, please review
 
 If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
+
+## Donasi
+
+Jika project ini bermanfaat, Anda dapat mendukung pengembangan selanjutnya melalui donasi:
+
+<div align="center">
+
+![QRIS](public/assets/qris.png)
+
+**Scan QRIS di atas untuk berdonasi**
+
+Setiap donasi akan digunakan untuk:
+- Pengembangan fitur baru
+- Perbaikan bug & maintenance
+- Infrastruktur server
+
+</div>
+
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
